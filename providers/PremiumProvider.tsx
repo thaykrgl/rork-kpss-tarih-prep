@@ -1,97 +1,153 @@
 import { useState, useCallback, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import createContextHook from '@nkzw/create-context-hook';
-import { PremiumPlan } from '@/types';
+import Purchases, {
+  PurchasesOffering,
+  PurchasesPackage,
+  CustomerInfo,
+  LOG_LEVEL,
+} from 'react-native-purchases';
 
-const PREMIUM_KEY = 'kpss_premium_status';
+const ENTITLEMENT_ID = 'premium';
 
-export const premiumPlans: PremiumPlan[] = [
-  {
-    id: 'monthly',
-    title: 'Aylık',
-    price: '₺49,99',
-    period: '/ay',
-  },
-  {
-    id: 'yearly',
-    title: 'Yıllık',
-    price: '₺299,99',
-    period: '/yıl',
-    badge: 'En Popüler',
-    savings: '%50 tasarruf',
-  },
-  {
-    id: 'lifetime',
-    title: 'Ömür Boyu',
-    price: '₺499,99',
-    period: 'tek seferlik',
-    savings: 'Sınırsız erişim',
-  },
-];
+function getRCToken() {
+  if (__DEV__ || Platform.OS === 'web')
+    return process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY ?? '';
+  return Platform.select({
+    ios: process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
+    android: process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
+    default: process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY,
+  }) ?? '';
+}
+
+let rcConfigured = false;
+try {
+  const token = getRCToken();
+  if (token) {
+    Purchases.configure({ apiKey: token });
+    if (__DEV__) {
+      Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    }
+    rcConfigured = true;
+    console.log('[Premium] RevenueCat configured successfully');
+  } else {
+    console.warn('[Premium] No RevenueCat API key found');
+  }
+} catch (e) {
+  console.error('[Premium] Failed to configure RevenueCat:', e);
+}
 
 export const [PremiumProvider, usePremium] = createContextHook(() => {
   const queryClient = useQueryClient();
   const [isPremium, setIsPremium] = useState<boolean>(false);
 
-  const premiumQuery = useQuery({
-    queryKey: ['premiumStatus'],
+  const customerInfoQuery = useQuery({
+    queryKey: ['rc-customer-info'],
     queryFn: async () => {
-      const stored = await AsyncStorage.getItem(PREMIUM_KEY);
-      return stored === 'true';
+      if (!rcConfigured) return null;
+      console.log('[Premium] Fetching customer info...');
+      const info = await Purchases.getCustomerInfo();
+      console.log('[Premium] Customer info:', JSON.stringify(info.entitlements.active));
+      return info;
     },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const offeringsQuery = useQuery({
+    queryKey: ['rc-offerings'],
+    queryFn: async () => {
+      if (!rcConfigured) return null;
+      console.log('[Premium] Fetching offerings...');
+      const offerings = await Purchases.getOfferings();
+      console.log('[Premium] Current offering:', offerings.current?.identifier);
+      console.log('[Premium] Packages:', offerings.current?.availablePackages.length);
+      return offerings;
+    },
+    staleTime: 1000 * 60 * 10,
   });
 
   const purchaseMutation = useMutation({
-    mutationFn: async (planId: string) => {
-      console.log('[Premium] Purchasing plan:', planId);
-      await AsyncStorage.setItem(PREMIUM_KEY, 'true');
-      return true;
+    mutationFn: async (pkg: PurchasesPackage) => {
+      console.log('[Premium] Purchasing package:', pkg.identifier);
+      const result = await Purchases.purchasePackage(pkg);
+      console.log('[Premium] Purchase result:', JSON.stringify(result.customerInfo.entitlements.active));
+      return result.customerInfo;
     },
-    onSuccess: () => {
-      setIsPremium(true);
-      queryClient.invalidateQueries({ queryKey: ['premiumStatus'] });
+    onSuccess: (info: CustomerInfo) => {
+      const hasPremium = info.entitlements.active[ENTITLEMENT_ID] !== undefined;
+      setIsPremium(hasPremium);
+      queryClient.invalidateQueries({ queryKey: ['rc-customer-info'] });
+      console.log('[Premium] Purchase success, isPremium:', hasPremium);
+    },
+    onError: (error: Error) => {
+      console.error('[Premium] Purchase error:', error.message);
     },
   });
 
   const restoreMutation = useMutation({
     mutationFn: async () => {
-      console.log('[Premium] Restoring purchases');
-      const stored = await AsyncStorage.getItem(PREMIUM_KEY);
-      return stored === 'true';
+      console.log('[Premium] Restoring purchases...');
+      const info = await Purchases.restorePurchases();
+      console.log('[Premium] Restore result:', JSON.stringify(info.entitlements.active));
+      return info;
     },
-    onSuccess: (result) => {
-      setIsPremium(result);
+    onSuccess: (info: CustomerInfo) => {
+      const hasPremium = info.entitlements.active[ENTITLEMENT_ID] !== undefined;
+      setIsPremium(hasPremium);
+      queryClient.invalidateQueries({ queryKey: ['rc-customer-info'] });
+      console.log('[Premium] Restore success, isPremium:', hasPremium);
+    },
+    onError: (error: Error) => {
+      console.error('[Premium] Restore error:', error.message);
     },
   });
 
   useEffect(() => {
-    if (premiumQuery.data !== undefined) {
-      setIsPremium(premiumQuery.data);
+    if (customerInfoQuery.data) {
+      const hasPremium =
+        customerInfoQuery.data.entitlements.active[ENTITLEMENT_ID] !== undefined;
+      setIsPremium(hasPremium);
+      console.log('[Premium] Updated isPremium from query:', hasPremium);
     }
-  }, [premiumQuery.data]);
+  }, [customerInfoQuery.data]);
 
-  const purchasePlan = useCallback((planId: string) => {
-    purchaseMutation.mutate(planId);
-  }, [purchaseMutation]);
+  const currentOffering: PurchasesOffering | null =
+    offeringsQuery.data?.current ?? null;
+
+  const lifetimePackage: PurchasesPackage | null =
+    currentOffering?.availablePackages?.[0] ?? null;
+
+  const purchasePackage = useCallback(
+    (pkg: PurchasesPackage) => {
+      purchaseMutation.mutate(pkg);
+    },
+    [purchaseMutation],
+  );
 
   const restorePurchases = useCallback(() => {
     restoreMutation.mutate();
   }, [restoreMutation]);
 
-  const canAccessTopic = useCallback((topicIsPremium: boolean) => {
-    if (!topicIsPremium) return true;
-    return isPremium;
-  }, [isPremium]);
+  const canAccessTopic = useCallback(
+    (topicIsPremium: boolean) => {
+      if (!topicIsPremium) return true;
+      return isPremium;
+    },
+    [isPremium],
+  );
 
   return {
     isPremium,
-    isLoading: premiumQuery.isLoading,
-    purchasePlan,
+    isLoading: customerInfoQuery.isLoading || offeringsQuery.isLoading,
+    currentOffering,
+    lifetimePackage,
+    purchasePackage,
     restorePurchases,
     isPurchasing: purchaseMutation.isPending,
     isRestoring: restoreMutation.isPending,
+    purchaseError: purchaseMutation.error,
+    restoreError: restoreMutation.error,
     canAccessTopic,
-    plans: premiumPlans,
   };
 });

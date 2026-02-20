@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -18,8 +18,16 @@ import { usePremium } from '@/providers/PremiumProvider';
 
 export default function PaywallScreen() {
   const router = useRouter();
-  const { purchasePlan, restorePurchases, isPurchasing, isRestoring, plans } = usePremium();
-  const [selectedPlan, setSelectedPlan] = useState<string>('yearly');
+  const {
+    lifetimePackage,
+    purchasePackage,
+    restorePurchases,
+    isPurchasing,
+    isRestoring,
+    isLoading,
+    purchaseError,
+    restoreError,
+  } = usePremium();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
@@ -39,20 +47,36 @@ export default function PaywallScreen() {
     ]).start();
   }, []);
 
+  useEffect(() => {
+    if (purchaseError) {
+      const msg = (purchaseError as Error).message ?? 'Bilinmeyen hata';
+      if (!msg.includes('cancelled') && !msg.includes('canceled')) {
+        Alert.alert('Hata', 'Satın alma başarısız oldu. Lütfen tekrar deneyin.');
+      }
+    }
+  }, [purchaseError]);
+
+  useEffect(() => {
+    if (restoreError) {
+      Alert.alert('Hata', 'Satın alım geri yüklenemedi. Lütfen tekrar deneyin.');
+    }
+  }, [restoreError]);
+
   const handlePurchase = () => {
+    if (!lifetimePackage) {
+      Alert.alert('Hata', 'Ürün bilgisi yüklenemedi. Lütfen tekrar deneyin.');
+      return;
+    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    purchasePlan(selectedPlan);
-    Alert.alert(
-      'Premium Aktif! 🎉',
-      'Tüm konulara sınırsız erişiminiz açıldı.',
-      [{ text: 'Harika!', onPress: () => router.back() }]
-    );
+    purchasePackage(lifetimePackage);
   };
 
   const handleRestore = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     restorePurchases();
   };
+
+  const priceLabel = lifetimePackage?.product?.priceString ?? '$3.00';
 
   const features = [
     { icon: BookOpen, text: 'Tüm 11 konu başlığına erişim', color: '#2E86AB' },
@@ -106,75 +130,44 @@ export default function PaywallScreen() {
               ))}
             </View>
 
-            <View style={styles.plansContainer}>
-              {plans.map((plan) => {
-                const isSelected = selectedPlan === plan.id;
-                return (
-                  <TouchableOpacity
-                    key={plan.id}
-                    style={[
-                      styles.planCard,
-                      isSelected && styles.planCardSelected,
-                    ]}
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      setSelectedPlan(plan.id);
-                    }}
-                  >
-                    {plan.badge && (
-                      <View style={styles.planBadge}>
-                        <Text style={styles.planBadgeText}>{plan.badge}</Text>
-                      </View>
-                    )}
-                    <View style={styles.planRadio}>
-                      {isSelected ? (
-                        <View style={styles.planRadioSelected}>
-                          <Check color={Colors.white} size={12} />
-                        </View>
-                      ) : (
-                        <View style={styles.planRadioEmpty} />
-                      )}
-                    </View>
-                    <View style={styles.planInfo}>
-                      <Text style={[styles.planTitle, isSelected && styles.planTitleSelected]}>
-                        {plan.title}
-                      </Text>
-                      {plan.savings && (
-                        <Text style={styles.planSavings}>{plan.savings}</Text>
-                      )}
-                    </View>
-                    <View style={styles.planPricing}>
-                      <Text style={[styles.planPrice, isSelected && styles.planPriceSelected]}>
-                        {plan.price}
-                      </Text>
-                      <Text style={styles.planPeriod}>{plan.period}</Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
+            <View style={styles.priceCard}>
+              <View style={styles.priceBadge}>
+                <Text style={styles.priceBadgeText}>Tek Seferlik</Text>
+              </View>
+              <View style={styles.priceRow}>
+                <View style={styles.priceRadioSelected}>
+                  <Check color={Colors.white} size={12} />
+                </View>
+                <View style={styles.priceInfo}>
+                  <Text style={styles.priceTitle}>Ömür Boyu Erişim</Text>
+                  <Text style={styles.priceSavings}>Abonelik yok, bir kere öde</Text>
+                </View>
+                <Text style={styles.priceAmount}>{priceLabel}</Text>
+              </View>
             </View>
           </Animated.View>
         </ScrollView>
 
         <View style={styles.bottomContainer}>
           <TouchableOpacity
-            style={[styles.purchaseButton, isPurchasing && styles.purchaseButtonDisabled]}
+            style={[styles.purchaseButton, (isPurchasing || isLoading) && styles.purchaseButtonDisabled]}
             activeOpacity={0.8}
             onPress={handlePurchase}
-            disabled={isPurchasing}
+            disabled={isPurchasing || isLoading}
           >
-            {isPurchasing ? (
+            {isPurchasing || isLoading ? (
               <ActivityIndicator color={Colors.white} size="small" />
             ) : (
               <>
                 <Crown color={Colors.white} size={20} />
-                <Text style={styles.purchaseButtonText}>Premium'a Geç</Text>
+                <Text style={styles.purchaseButtonText}>
+                  {priceLabel} ile Premium'a Geç
+                </Text>
               </>
             )}
           </TouchableOpacity>
           <Text style={styles.legalText}>
-            İstediğin zaman iptal edebilirsin. Abonelik otomatik yenilenir.
+            Tek seferlik ödeme. Abonelik değildir, otomatik yenilenmez.
           </Text>
         </View>
       </SafeAreaView>
@@ -275,25 +268,16 @@ const styles = StyleSheet.create({
     color: Colors.text,
     flex: 1,
   },
-  plansContainer: {
-    gap: 10,
-    marginBottom: 8,
-  },
-  planCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  priceCard: {
+    flexDirection: 'column',
     backgroundColor: Colors.surface,
     borderRadius: 16,
     padding: 16,
     borderWidth: 2,
-    borderColor: Colors.borderLight,
+    borderColor: Colors.accent,
     position: 'relative' as const,
   },
-  planCardSelected: {
-    borderColor: Colors.accent,
-    backgroundColor: Colors.accent + '08',
-  },
-  planBadge: {
+  priceBadge: {
     position: 'absolute' as const,
     top: -10,
     right: 16,
@@ -302,62 +286,43 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 8,
   },
-  planBadgeText: {
+  priceBadgeText: {
     fontSize: 10,
     fontWeight: '800' as const,
     color: Colors.white,
     letterSpacing: 0.3,
   },
-  planRadio: {
-    marginRight: 14,
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  planRadioSelected: {
+  priceRadioSelected: {
     width: 24,
     height: 24,
     borderRadius: 12,
     backgroundColor: Colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 14,
   },
-  planRadioEmpty: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: Colors.border,
-  },
-  planInfo: {
+  priceInfo: {
     flex: 1,
   },
-  planTitle: {
+  priceTitle: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.text,
-  },
-  planTitleSelected: {
     color: Colors.primary,
   },
-  planSavings: {
+  priceSavings: {
     fontSize: 11,
     fontWeight: '600' as const,
     color: Colors.success,
     marginTop: 2,
   },
-  planPricing: {
-    alignItems: 'flex-end',
-  },
-  planPrice: {
-    fontSize: 18,
+  priceAmount: {
+    fontSize: 22,
     fontWeight: '800' as const,
-    color: Colors.text,
-  },
-  planPriceSelected: {
     color: Colors.primary,
-  },
-  planPeriod: {
-    fontSize: 11,
-    color: Colors.textLight,
-    fontWeight: '500' as const,
   },
   bottomContainer: {
     paddingHorizontal: 24,
