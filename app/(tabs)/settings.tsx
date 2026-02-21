@@ -8,17 +8,21 @@ import {
   Modal,
   Pressable,
   Switch,
+  Alert,
+  Linking,
+  Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { 
-  Sun, 
-  Moon, 
-  Monitor, 
-  Bell, 
-  Clock, 
-  CheckCircle, 
-  ChevronRight, 
-  Info, 
+import { useRouter } from 'expo-router';
+import {
+  Sun,
+  Moon,
+  Monitor,
+  Bell,
+  Clock,
+  CheckCircle,
+  ChevronRight,
+  Info,
   Lock,
   User,
   ShieldCheck,
@@ -33,11 +37,13 @@ import { useTheme } from '@/providers/ThemeProvider';
 import { usePremium } from '@/providers/PremiumProvider';
 
 export default function SettingsScreen() {
-  const { 
-    progress, 
-    toggleNotifications, 
+  const router = useRouter();
+  const {
+    progress,
+    toggleNotifications,
     setReminderTime,
-    setTheme
+    setTheme,
+    resetProgress,
   } = useStudy();
   const { colors, themeMode } = useTheme();
   const { isPremium } = usePremium();
@@ -60,7 +66,11 @@ export default function SettingsScreen() {
           <Text style={themedStyles.subtitle}>Uygulama tercihlerinizi yönetin</Text>
 
           {/* Premium Status */}
-          <TouchableOpacity style={themedStyles.premiumCard} activeOpacity={0.9}>
+          <TouchableOpacity
+            style={themedStyles.premiumCard}
+            activeOpacity={0.9}
+            onPress={() => { if (!isPremium) router.push('/paywall' as any); }}
+          >
             <View style={themedStyles.premiumInfo}>
               <View style={[themedStyles.premiumIconContainer, { backgroundColor: isPremium ? '#FFD700' : colors.primary }]}>
                 <ShieldCheck color={colors.white} size={24} />
@@ -150,21 +160,37 @@ export default function SettingsScreen() {
 
           {renderSectionHeader('Hakkında & Destek')}
           <View style={themedStyles.settingsCard}>
-            <TouchableOpacity style={themedStyles.navItem}>
+            <TouchableOpacity
+              style={themedStyles.navItem}
+              onPress={() => Linking.openURL('mailto:destek@kpsstarih.app?subject=Geri%20Bildirim')}
+            >
               <View style={themedStyles.settingInfo}>
                 <Mail color={colors.textSecondary} size={20} />
                 <Text style={themedStyles.navText}>Geri Bildirim Gönder</Text>
               </View>
               <ChevronRight color={colors.textLight} size={18} />
             </TouchableOpacity>
-            <TouchableOpacity style={themedStyles.navItem}>
+            <TouchableOpacity
+              style={themedStyles.navItem}
+              onPress={() => {
+                // App Store link will be updated after publish
+                Alert.alert('Teşekkürler!', 'Uygulama yayınlandıktan sonra App Store\'da puanlayabilirsiniz.');
+              }}
+            >
               <View style={themedStyles.settingInfo}>
                 <Star color={colors.textSecondary} size={20} />
                 <Text style={themedStyles.navText}>Uygulamayı Puanla</Text>
               </View>
               <ChevronRight color={colors.textLight} size={18} />
             </TouchableOpacity>
-            <TouchableOpacity style={themedStyles.navItem}>
+            <TouchableOpacity
+              style={themedStyles.navItem}
+              onPress={() => {
+                Share.share({
+                  message: 'KPSS Tarih hazırlık uygulamasını dene! Tüm konular, testler ve bilgi kartları ile sınava hazırlan.',
+                });
+              }}
+            >
               <View style={themedStyles.settingInfo}>
                 <Share2 color={colors.textSecondary} size={20} />
                 <Text style={themedStyles.navText}>Arkadaşlarınla Paylaş</Text>
@@ -179,7 +205,19 @@ export default function SettingsScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={themedStyles.logoutBtn}>
+          <TouchableOpacity
+            style={themedStyles.logoutBtn}
+            onPress={() => {
+              Alert.alert(
+                'Verileri Sıfırla',
+                'Tüm ilerlemeniz, test sonuçlarınız ve notlarınız silinecektir. Bu işlem geri alınamaz.',
+                [
+                  { text: 'İptal', style: 'cancel' },
+                  { text: 'Sıfırla', style: 'destructive', onPress: () => resetProgress() },
+                ]
+              );
+            }}
+          >
             <LogOut color={colors.error} size={20} />
             <Text style={themedStyles.logoutText}>Verileri Sıfırla</Text>
           </TouchableOpacity>

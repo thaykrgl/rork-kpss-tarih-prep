@@ -107,7 +107,7 @@ export default function MapsScreen() {
                   <View style={themedStyles.regionDetails}>
                     <View style={themedStyles.mapPlaceholder}>
                       <MapIcon size={40} color={colors.border} />
-                      <Text style={themedStyles.mapPlaceholderText}>Harita Görseli Yükleniyor...</Text>
+                      <Text style={themedStyles.mapPlaceholderText}>Harita görseli yakında eklenecek</Text>
                     </View>
                     <Text style={themedStyles.detailsTitle}>Önemli Notlar</Text>
                     <Text style={themedStyles.detailsText}>{region.details}</Text>

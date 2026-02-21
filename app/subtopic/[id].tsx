@@ -22,8 +22,13 @@ import {
   Plus,
   Trash2,
   Send,
+  Headphones,
+  Play,
+  Pause,
+  Square,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
+import * as Speech from 'expo-speech';
 import { topics } from '@/mocks/topics';
 import { useStudy } from '@/providers/StudyProvider';
 import { useTheme } from '@/providers/ThemeProvider';
@@ -43,8 +48,15 @@ export default function SubtopicDetailScreen() {
 
   const [showNoteInput, setShowNoteInput] = useState<boolean>(false);
   const [noteText, setNoteText] = useState<string>('');
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
   const themedStyles = useMemo(() => styles(colors), [colors]);
+
+  React.useEffect(() => {
+    return () => {
+      Speech.stop();
+    };
+  }, []);
 
   let foundSubtopic = null;
   let parentTopic = null;
@@ -100,6 +112,26 @@ export default function SubtopicDetailScreen() {
     ]);
   }, [deleteNote]);
 
+  const toggleSpeech = async () => {
+    if (isSpeaking) {
+      Speech.stop();
+      setIsSpeaking(false);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } else {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setIsSpeaking(true);
+      Speech.speak(subtopic.content, {
+        language: 'tr-TR',
+        onDone: () => setIsSpeaking(false),
+        onStopped: () => setIsSpeaking(false),
+        onError: () => {
+          setIsSpeaking(false);
+          Alert.alert('Hata', 'Sesli anlatım başlatılamadı.');
+        },
+      });
+    }
+  };
+
   return (
     <KeyboardAvoidingView 
       style={themedStyles.container} 
@@ -139,6 +171,31 @@ export default function SubtopicDetailScreen() {
           </View>
 
           <Text style={themedStyles.title}>{subtopic.title}</Text>
+
+          <TouchableOpacity 
+            style={[themedStyles.podcastBar, isSpeaking && themedStyles.podcastBarActive]}
+            onPress={toggleSpeech}
+            activeOpacity={0.8}
+          >
+            <View style={themedStyles.podcastIconContainer}>
+              <Headphones color={isSpeaking ? colors.white : colors.primary} size={20} />
+            </View>
+            <View style={themedStyles.podcastInfo}>
+              <Text style={[themedStyles.podcastTitle, isSpeaking && { color: colors.white }]}>
+                {isSpeaking ? 'Anlatım Dinleniyor...' : 'Sesli Anlatımı Dinle'}
+              </Text>
+              <Text style={[themedStyles.podcastSubtitle, isSpeaking && { color: 'rgba(255,255,255,0.8)' }]}>
+                Podcast Modu • Türkçe Seslendirme
+              </Text>
+            </View>
+            <View style={[themedStyles.podcastAction, isSpeaking && { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+              {isSpeaking ? (
+                <Square color={colors.white} size={16} fill={colors.white} />
+              ) : (
+                <Play color={colors.primary} size={16} fill={colors.primary} />
+              )}
+            </View>
+          </TouchableOpacity>
 
           <View style={themedStyles.contentCard}>
             <Text style={themedStyles.contentText}>{subtopic.content}</Text>
@@ -298,7 +355,56 @@ const styles = (colors: any) => StyleSheet.create({
     fontWeight: '800' as const,
     color: colors.primary,
     letterSpacing: -0.3,
-    marginBottom: 20,
+    marginBottom: 8,
+  },
+  podcastBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.cardShadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  podcastBarActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  podcastIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: colors.primary + '10',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  podcastInfo: {
+    flex: 1,
+  },
+  podcastTitle: {
+    fontSize: 15,
+    fontWeight: '700' as const,
+    color: colors.text,
+  },
+  podcastSubtitle: {
+    fontSize: 12,
+    color: colors.textLight,
+    marginTop: 2,
+  },
+  podcastAction: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primary + '10',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contentCard: {
     backgroundColor: colors.surface,

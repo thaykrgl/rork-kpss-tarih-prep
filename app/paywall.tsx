@@ -83,8 +83,8 @@ export default function PaywallScreen() {
   const priceLabel = lifetimePackage?.product?.priceString ?? '₺119,99';
 
   const features = [
-    { icon: BookOpen, text: 'Tüm 11 konu başlığına erişim', color: '#2E86AB' },
-    { icon: Brain, text: '200+ soru ile sınırsız test', color: '#C0392B' },
+    { icon: BookOpen, text: 'Tüm 12 konu başlığına erişim', color: '#2E86AB' },
+    { icon: Brain, text: '100+ soru ile sınırsız test', color: '#C0392B' },
     { icon: Layers, text: 'Tüm bilgi kartları', color: '#C8A951' },
     { icon: Sparkles, text: 'Sürekli güncellenen içerik', color: '#1B7A4E' },
   ];

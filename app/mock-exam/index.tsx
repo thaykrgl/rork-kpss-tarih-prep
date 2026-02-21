@@ -45,7 +45,7 @@ export default function MockExamScreen() {
   }, []);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setInterval>;
     if (examStarted && !examFinished && timeLeft > 0) {
       timer = setInterval(() => {
         setTimeLeft(prev => {

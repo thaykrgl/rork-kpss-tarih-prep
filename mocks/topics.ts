@@ -7,14 +7,14 @@ export const topics: Topic[] = [
     description: 'Hunlardan Uygurlara kadar İslamiyet öncesi Türk devletleri',
     icon: 'Swords',
     color: '#2E86AB',
-    questionCount: 20,
+    questionCount: 14,
     isPremium: false,
     subtopics: [
       {
         id: 'ilk-turk-1',
         topicId: 'ilk-turk-devletleri',
         title: 'Asya Hun Devleti',
-        content: 'Bilinen ilk Türk devleti olan Asya Hun Devleti, Teoman tarafından kurulmuş, Mete Han döneminde en güçlü dönemini yaşamıştır. Mete Han onlu askeri sistemi kurarak düzenli ordu geleneğini başlatmıştır.',
+        content: 'Asya Hun Devleti, Orta Asya\'da kurulan ve tarihte bilinen ilk büyük Türk devleti olma özelliğini taşır. Devletin temelleri Teoman döneminde atılmış olsa da, gerçek gücüne Mete Han zamanında ulaşmıştır. Mete Han, babası Teoman\'ı tahttan indirerek yönetimi ele almış ve Türk topluluklarını ilk kez tek bir çatı altında birleştirmiştir. Onun askeri dehası olan "Onlu Sistem", günümüz modern ordularının bile temelini oluşturmaktadır. Hunlar, Çin üzerinde kurdukları baskı ile meşhurdur; nitekim devasa Çin Seddi, Hun akınlarını durdurabilmek amacıyla inşa edilmiştir. Ancak Hunlar, Çin\'i istila etmek yerine onu vergiye bağlamayı tercih etmişlerdir; çünkü kalabalık Çin nüfusu içinde Türk kültürünün asimile olmasından çekinmişlerdir. Bu stratejik vizyon, devletin milli kimliğini korumasını sağlamıştır.',
         keyPoints: [
           'Kuruluş: MÖ 220 - Teoman',
           'En parlak dönem: Mete Han',
@@ -28,7 +28,7 @@ export const topics: Topic[] = [
         id: 'ilk-turk-2',
         topicId: 'ilk-turk-devletleri',
         title: 'Avrupa Hun Devleti',
-        content: 'Kavimler Göçü\'nü başlatan Avrupa Hunları, Attila döneminde en güçlü dönemini yaşamıştır. Batı Roma İmparatorluğu\'nun yıkılmasında önemli rol oynamıştır.',
+        content: 'Avrupa Hun Devleti, Balamir önderliğinde MS 375 yılında başlayan Kavimler Göçü\'nün bir sonucu olarak Avrupa topraklarında şekillenmiştir. Bu göç dalgası, önlerindeki kavimleri batıya iterek Roma İmparatorluğu\'nun dengelerini altüst etmiş ve İlk Çağ\'ın kapanıp Orta Çağ\'ın başlamasına zemin hazırlamıştır. Devletin en parlak dönemi, "Tanrı\'nın Kırbacı" olarak anılan efsanevi lider Attila dönemidir. Attila, hem Doğu Roma\'yı (Bizans) hem de Batı Roma\'yı baskı altında tutarak vergiye bağlamıştır. Margus ve Anatolius antlaşmalarıyla Bizans\'ı ekonomik olarak kendisine mahkum etmiştir. Hunların bu askeri üstünlüğü, Avrupa\'nın etnik ve siyasi haritasının kökten değişmesine yol açmış, Batı Roma İmparatorluğu’nun çöküşünü hızlandırmıştır.',
         keyPoints: [
           '375: Kavimler Göçü\'nün başlangıcı',
           'Balamir: Kavimler Göçü\'nü başlatan lider',
@@ -41,7 +41,7 @@ export const topics: Topic[] = [
         id: 'ilk-turk-3',
         topicId: 'ilk-turk-devletleri',
         title: 'I. Göktürk Devleti',
-        content: 'Göktürk Devleti, Türk adını kullanan ilk devlettir. Bumin Kağan tarafından 552\'de kurulmuş, Orta Asya\'da geniş bir coğrafyaya hükmetmiştir.',
+        content: 'I. Göktürk Devleti, Türk tarihinde "Türk" adını siyasi bir isim olarak ilk kez kullanan devlet olması bakımından devrim niteliğinde bir öneme sahiptir. 552 yılında Bumin Kağan önderliğinde Avar hakimiyetine son verilerek Ötüken merkezli olarak kurulmuştur. Devlet, "İkili Teşkilat" adı verilen bir sistemle yönetilmiştir; Bumin Kağan doğuyu yönetirken, kardeşi İstemi Yabgu batı kanadını idare etmiştir. Göktürkler, İpek Yolu hakimiyeti için Sasaniler ve Bizans ile stratejik ittifaklar kurarak dönemin küresel siyasetinde belirleyici bir güç olmuşlardır. Türk kültürünü geniş kitlelere yayan bu devlet, milliyetçi bir kimliğin tohumlarını atmış ve Orta Asya\'daki Türk birliğini yeniden harmanlamıştır.',
         keyPoints: [
           'Kuruluş: 552 - Bumin Kağan',
           'Türk adı: Siyasi bir isim olarak ilk kez kullanıldı',
@@ -55,7 +55,7 @@ export const topics: Topic[] = [
         id: 'ilk-turk-4',
         topicId: 'ilk-turk-devletleri',
         title: 'II. Göktürk (Kutluk) Devleti',
-        content: 'Çin esaretindeki Türkler, Kutluk (İlteriş) Kağan önderliğinde bağımsızlıklarını yeniden kazanmıştır. Orhun Kitabeleri bu döneme aittir.',
+        content: 'I. Göktürk Devleti\'nin yıkılmasının ardından başlayan 50 yıllık "Matem Dönemi" veya Çin esareti, Kutluk Kağan\'ın başlattığı destansı bir bağımsızlık mücadelesiyle sona ermiştir. Bu zafer sonrası "İlteriş" (yani devleti derleyen, toplayan) unvanını alan Kutluk Kağan, II. Göktürk Devleti\'ni kurmuştur. Bu dönemin en büyük mirası, şüphesiz Tonyukuk, Kül Tigin ve Bilge Kağan adına dikilen Orhun Kitabeleri\'dir. Bu anıtlar, Türk dili ve tarihinin ilk yazılı belgeleri olmanın ötesinde, hükümdarların halka hesap verdiği birer "Siyasetname" niteliği taşır. Bilge Kağan ve kardeşi Kül Tigin, efsanevi vezir Tonyukuk\'un rehberliğinde devleti en parlak seviyesine taşımış, Türk töresini ve bağımsızlık bilincini ebedi kılmışlardır.',
         keyPoints: [
           'Kuruluş: 682 - Kutluk (İlteriş) Kağan',
           'Bilge Kağan ve Kül Tigin: Devletin en güçlü yöneticileri',
@@ -69,7 +69,7 @@ export const topics: Topic[] = [
         id: 'ilk-turk-5',
         topicId: 'ilk-turk-devletleri',
         title: 'Uygur Devleti',
-        content: 'Uygurlar yerleşik hayata geçen ilk Türk devletidir. Matbaayı ve kağıdı kullanan ilk Türk topluluğudur. Maniheizm dinini benimsemişlerdir.',
+        content: 'Uygurlar, Türk tarihinde bir kırılma noktasıdır; çünkü onlar, göçebe yaşam tarzını terk edip yerleşik hayata geçen ilk Türk topluluğudur. 744 yılında Kutluk Bilge Kül Kağan tarafından kurulan bu devlet, Maniheizm ve Budizm dinlerini benimseyerek kültürel bir dönüşüm yaşamıştır. Maniheizm\'in et yemeği ve savaşmayı yasaklayan öğretileri Uygurların askeri dinamizmini zayıflatmış olsa da, onları sanat, mimari, tarım ve bilimde ileri taşımıştır. Şehirler (Balıklar) kurmuşlar, tapınaklar inşa etmişler ve matbaayı ilk kez kullanarak kağıt üzerine kitaplar basmışlardır. Kütüphaneleri ve gelişmiş hukuk belgeleriyle Uygurlar, Türklerin medeniyet sahnesindeki en "entellektüel" temsilcileri olmuşlardır.',
         keyPoints: [
           'Kuruluş: 744 - Kutluk Bilge Kül Kağan',
           'Yerleşik hayat: İlk kez bu devletle başladı',
@@ -118,14 +118,14 @@ export const topics: Topic[] = [
     description: 'Karahanlılardan Anadolu Selçuklulara Türk-İslam sentezi',
     icon: 'Moon',
     color: '#1A5276',
-    questionCount: 22,
+    questionCount: 12,
     isPremium: true,
     subtopics: [
       {
         id: 'turk-islam-1',
         topicId: 'turk-islam-devletleri',
         title: 'Karahanlılar',
-        content: 'Karahanlılar, İslamiyet\'i resmi din olarak kabul eden ilk Türk devletidir. Satuk Buğra Han 920\'de İslam\'ı kabul etmiştir. Türk-İslam kültürünün temelini atmışlardır.',
+        content: 'Karahanlılar, Türk-İslam sentezinin mimarı olan ilk Türk devletidir. 840 yılında Orta Asya\'da kurulan devlet, Satuk Buğra Han\'ın İslamiyet\'i kabul etmesiyle geri dönülemez bir kültürel devrim yaşamıştır. Karahanlılar, İslam\'ı kabul etmelerine rağmen ulusal kimliklerinden ödün vermemişler; Türkçe\'yi resmi dil ve eser dili olarak kullanmaya devam etmişlerdir. Bu dönemde Yusuf Has Hacib\'in "Kutadgu Bilig"i ve Kaşgarlı Mahmud\'un "Divanü Lügati\'t-Türk"ü gibi paha biçilemez eserler verilmiştir. Bu eserler, Türkçenin bir bilim ve sanat dili olduğunu dünyaya kanıtlarken, aynı zamanda Türk devlet geleneğinin İslami prensiplerle nasıl harmanlanması gerektiğini göstermiştir. Ayrıca ticareti canlandırmak için kurdukları "Ribat" adı verilen kervansaraylar, sosyal devlet anlayışının ilk örneklerindendir.',
         keyPoints: [
           'İslamiyet\'i kabul eden ilk Türk devleti',
           'Satuk Buğra Han - İslam\'ı kabul etti (920)',
@@ -139,7 +139,7 @@ export const topics: Topic[] = [
         id: 'turk-islam-2',
         topicId: 'turk-islam-devletleri',
         title: 'Gazneliler',
-        content: 'Gazneliler, Hindistan\'a İslam\'ı taşıyan önemli bir Türk devletidir. Sultan Mahmud döneminde en parlak dönemini yaşamıştır.',
+        content: 'Gazneliler, adını bugün Afganistan sınırlarında kalan Gazne şehrinden alan ve İslam\'ın Hindistan\'a yayılmasında başrol oynayan bir devlettir. En ünlü hükümdarları Gazneli Mahmud, Hindistan üzerine düzenlediği 17 seferle bölgenin kaderini değiştirmiş ve İslamiyet\'in bu geniş coğrafyada kök salmasını sağlamıştır. "Sultan" unvanını kullanan ilk Türk hükümdarı olan Gazneli Mahmud, bilime ve sanata o kadar önem vermiştir ki, büyük bilgin Biruni için "Sarayımın en değerli hazinesidir" demiştir. Ancak Gazneliler, geniş bir coğrafyada farklı milletleri bir arada tutmaya çalışırken merkezi otorite sorunları yaşamış ve 1040 Dandanakan Savaşı\'nda Selçuklulara yenilerek zayıflama sürecine girmişlerdir.',
         keyPoints: [
           'Kuruluş: 963 - Alp Tigin',
           'Sultan Mahmud - 17 Hindistan seferi',
@@ -154,7 +154,7 @@ export const topics: Topic[] = [
         id: 'turk-islam-3',
         topicId: 'turk-islam-devletleri',
         title: 'Büyük Selçuklu Devleti',
-        content: 'Büyük Selçuklu Devleti, Oğuz Türklerinin kurduğu büyük bir İslam devletidir. Tuğrul Bey tarafından kurulmuş, Malazgirt Savaşı ile Anadolu\'nun kapıları Türklere açılmıştır.',
+        content: 'Büyük Selçuklu Devleti, Horasan\'dan başlayarak Ceyhun\'dan Akdeniz\'e kadar uzanan devasa bir coğrafyayı kontrol eden bir cihan imparatorluğudur. 1040 Dandanakan Savaşı ile bağımsızlıklarını ilan eden Selçuklular, Tuğrul ve Çağrı Beylerin bilge liderliğinde yükselmişlerdir. Sultan Alparslan döneminde gerçekleşen 1071 Malazgirt Zaferi, sadece bir askeri başarı değil, Anadolu\'nun kapılarının Türklere ebediyen açıldığı bir dönüm noktasıdır. Devlet, en parlak dönemini Sultan Melikşah zamanında yaşamıştır. Bu dönemi eşsiz kılan unsurlardan biri, dahi vezir Nizamülmülk\'ün kurduğu "Nizamiye Medreseleri"dir; bu medreseler ilk sistemli üniversite eğitimi modelini oluşturmuş ve Haşhaşi tehdidine karşı fikri bir kalkan görevi görmüştür. Selçuklular, hem askeri hem de medeni sahada modern Türk devletlerinin en büyük atası sayılır.',
         keyPoints: [
           'Kuruluş: 1040 - Tuğrul Bey (Dandanakan Zaferi)',
           'Tuğrul Bey - Abbasi halifesini korudu',
@@ -170,7 +170,7 @@ export const topics: Topic[] = [
         id: 'turk-islam-4',
         topicId: 'turk-islam-devletleri',
         title: 'Anadolu Selçuklu Devleti',
-        content: 'Süleyman Şah tarafından kurulan Anadolu Selçuklu Devleti, Anadolu\'yu Türk yurdu haline getirmiştir. I. ve II. Kılıçarslan, I. Alaeddin Keykubad dönemleri önemlidir.',
+        content: 'Anadolu Selçuklu Devleti (Türkiye Selçukluları), Malazgirt sonrası Anadolu\'da kurulan ve topraklarımızı vatanlaştıran asıl güçtür. Kutalmışoğlu Süleyman Şah tarafından İznik merkezli kurulan devlet, Haçlı seferleri gibi devasa tehditlere karşı göğüs germiş ve Anadolu\'nun Türk kimliğini korumuştur. II. Kılıçarslan döneminde 1176 yılında kazanılan Miryokefalon Zaferi, Bizans\'ın Anadolu\'yu geri alma umutlarını tamamen bitirmiş ve buranın bir "Türk yurdu" olduğunu belgeyle tescillemiştir. I. Alaeddin Keykubad döneminde ise devlet ticari, mimari ve kültürel zirvesine ulaşmıştır. Sinop ve Alanya gibi liman kentlerinin fethiyle deniz aşırı ticaret başlamış, Anadolu kervansaraylarla donatılmıştır. Mevlana, Yunus Emre ve Hacı Bektaş Veli gibi gönül sultanları, bu dönemde hoşgörü ve sevgi temelli Türk-İslam ruhunu Anadolu\'ya ilmik ilmik işlemişlerdir.',
         keyPoints: [
           'Kuruluş: 1075 - Kutalmışoğlu Süleyman Şah',
           'Başkent: İznik, sonra Konya',
@@ -221,14 +221,14 @@ export const topics: Topic[] = [
     description: 'Hz. Muhammed döneminden Abbasilere kadar İslam medeniyeti',
     icon: 'BookOpen',
     color: '#117A65',
-    questionCount: 18,
+    questionCount: 8,
     isPremium: true,
     subtopics: [
       {
         id: 'islam-1',
         topicId: 'islam-tarihi',
         title: 'Hz. Muhammed Dönemi',
-        content: 'Hz. Muhammed\'in Mekke\'den Medine\'ye hicreti İslam takviminin başlangıcıdır. Medine\'de ilk İslam devleti kurulmuştur.',
+        content: 'Hz. Muhammed dönemi, İslamiyet\'in doğuşu ve bir dünya medeniyetine dönüşmesinin ilk adımıdır. 622 yılındaki Hicret, sadece bir göç değil, Medine\'de temelleri atılan ilk İslam Devleti\'nin de başlangıcıdır. Bu dönemde Müslümanlar, Mekkeli müşriklere karşı Bedir, Uhud ve Hendek gibi kritik savunma savaşları vermişlerdir. 628 Hudeybiye Antlaşması ile İslam Devleti siyasi bir varlık olarak resmen tanınmış, 630 yılında Mekke\'nin fethiyle Arap Yarımadası’nda putperestlik dönemi kapanmıştır. Hz. Muhammed’in Veda Hutbesi ise insan hakları, eşitlik ve adalet üzerine kurulu evrensel bir beyanname niteliği taşır. Bu süreç, parçalanmış kabile yapısından, inanç birliği etrafında kenetlenmiş güçlü bir topluma geçişi sağlamıştır.',
         keyPoints: [
           'Hicret (622) - İslam takviminin başlangıcı',
           'Medine Sözleşmesi - İlk yazılı anayasa niteliğinde',
@@ -244,7 +244,7 @@ export const topics: Topic[] = [
         id: 'islam-2',
         topicId: 'islam-tarihi',
         title: 'Dört Halife Dönemi (632-661)',
-        content: 'Hz. Ebubekir, Hz. Ömer, Hz. Osman ve Hz. Ali dönemlerinde İslam devleti hızla genişlemiş ve kurumsal yapı oluşturulmuştur.',
+        content: 'Dört Halife Dönemi, İslam Devleti’nin hem sınırlarının hızla genişlediği hem de kurumsal kimliğinin perçinlendiği bir "Cumhuriyet" dönemidir. Hz. Ebubekir iç karışıklıkları (Ridde Savaşları) bastırıp Kur’an-ı Kerim’i kitap haline getirerek birliği korumuş; Hz. Ömer ise devletin asıl teşkilatçısı olmuştur. Suriye, Filistin ve Mısır’ın fethiyle Bizans ve Sasani gibi imparatorluklara darbe vurulmuş, ordugah şehirler, divan teşkilatı ve ikta sistemi gibi devrimler yapılmıştır. Hz. Osman döneminde ilk donanma kurulup sınırlar Türkistan’a ve Kuzey Afrika’ya dayanırken, Hz. Ali dönemi ne yazık ki iç karışıklıklar ve Cemel-Sıffin gibi olaylarla İslam dünyasındaki ilk ayrışmaların yaşandığı hüzünlü bir süreç olmuştur.',
         keyPoints: [
           'Hz. Ebubekir - Ridde savaşları, Kur\'an\'ın toplanması',
           'Hz. Ömer - Kudüs\'ün fethi, divan teşkilatı, ikta sistemi',
@@ -259,7 +259,7 @@ export const topics: Topic[] = [
         id: 'islam-3',
         topicId: 'islam-tarihi',
         title: 'Emeviler (661-750)',
-        content: 'Emeviler döneminde İslam coğrafyası İspanya\'dan Orta Asya\'ya kadar genişlemiş, ancak Arap milliyetçiliği politikası tepkilere yol açmıştır.',
+        content: 'Emeviler dönemi, İslam dünyasında saltanat sisteminin başladığı ve fetih hareketlerinin zirveye ulaştığı bir devirdir. Muaviye tarafından Şam merkezli kurulan bu devlet, İslam ordularını İspanya üzerinden Avrupa’ya (Endülüs) ve diğer yandan Orta Asya’ya kadar taşımıştır. Ancak Emeviler, "Mevali" adı verilen Arap milliyetçiliği politikasıyla Arap olmayan Müslümanlara ikinci sınıf vatandaş muamelesi yapmış; bu durum Kerbela Olayı’nın acısıyla birleşince devlete karşı büyük bir muhalefet doğurmuştur. Mimari ve kurumsallaşmada önemli adımlar atan Emeviler, bu ırkçı politikalarının kurbanı olarak 750 yılında Abbasi ihtilaliyle yıkılmışlardır.',
         keyPoints: [
           'Muaviye - Halifeliği saltanata dönüştürdü',
           'Şam merkez yapıldı',
@@ -274,7 +274,7 @@ export const topics: Topic[] = [
         id: 'islam-4',
         topicId: 'islam-tarihi',
         title: 'Abbasiler (750-1258)',
-        content: 'Abbasiler döneminde bilim ve kültür alanında büyük gelişmeler yaşanmış, İslam\'ın Altın Çağı yaşanmıştır.',
+        content: 'Abbasiler dönemi, İslam tarihinin askeri fetihlerden çok bilimsel, sanatsal ve felsefi uyanışla anılan "Altın Çağı"dır. Bağdat’ı başkent yaparak kurulan Beytü’l Hikme (Bilgelik Evi) sayesinde Antik Yunan ve Hint klasiklerini Arapçaya çeviren Abbasiler, modern bilimin temellerini atmışlardır. Harezmî cebiri kurarken, İbn-i Sina tıp alanında Avrupa’ya asırlarca rehberlik edecek eserler vermiştir. Emevilerin aksine daha eşitlikçi bir politika izleyen Abbasiler, Türklerin askeri ve idari yeteneklerinden de faydalanmış; onlar için Samarra gibi özel ordugah şehirler kurmuşlardır. Bu muazzam medeniyet, 1258 yılında Moğol istilasıyla Bağdat’ın yakılıp yıkılmasıyla son bulmuştur.',
         keyPoints: [
           'Bağdat merkez yapıldı',
           'Beytü\'l Hikme (Bilgelik Evi) - Bilim akademisi',
@@ -293,14 +293,14 @@ export const topics: Topic[] = [
     description: 'Osmanlı Beyliği\'nin kuruluşundan Fatih\'e kadar olan dönem (1299-1453)',
     icon: 'Castle',
     color: '#8B4513',
-    questionCount: 18,
+    questionCount: 12,
     isPremium: false,
     subtopics: [
       {
         id: 'osmanli-kurulusu-1',
         topicId: 'osmanli-kurulusu',
         title: 'Osmanlı Beyliği\'nin Kuruluşu',
-        content: 'Osmanlı Beyliği, 1299 yılında Osman Bey tarafından Söğüt\'te kurulmuştur. Anadolu Selçuklu Devleti\'nin zayıflamasıyla birlikte bağımsızlığını ilan eden beylik, Bizans sınırlarında güçlü bir devlet haline gelmiştir.',
+        content: 'Osman Bey, Osmanlı Beyliği’nin kurucusu ve hırslı bir stratejisttir. Söğüt ve Domaniç ekseninde küçük bir aşireti, Bizans sınırındaki zayıflıkları kullanarak bağımsız bir devlete dönüştürmüştür. Şeyh Edebali’nin kızıyla evlenerek dini ve sosyal bir güç olan "Ahiler"in desteğini arkasına almış, bu sayede hem manevi hem de siyasi bir meşruiyet kazanmıştır. 1302 Koyunhisar Savaşı ile Bizans’a karşı kazandığı ilk zafer, beyliğin bağımsızlığının tescili niteliğindedir. Osman Bey, "İstimalet" (Hoşgörü) politikasıyla fethettiği bölgelerdeki gayrimüslim halkın gönlünü kazanmış ve fethi kalıcı kılmıştır.',
         keyPoints: [
           'Kuruluş: 1299 - Osman Bey',
           'Merkez: Söğüt, sonra Bursa',
@@ -313,7 +313,7 @@ export const topics: Topic[] = [
         id: 'osmanli-kurulusu-2',
         topicId: 'osmanli-kurulusu',
         title: 'Orhan Bey Dönemi',
-        content: 'Orhan Bey döneminde Osmanlı Beyliği\'nden devlete geçiş süreci başlamıştır. Bursa\'nın fethi ile başkent Bursa olmuş, ilk düzenli ordu kurulmuş ve ilk Osmanlı akçesi basılmıştır.',
+        content: 'Orhan Bey, Osmanlı’yı bir beylikten tam anlamıyla bir "Devlet" yapısına kavuşturan hükümdardır. Babasından vasiyet olarak aldığı Bursa’yı fethederek başkent yapmış; ardından İznik ve İzmit gibi kritik şehirleri alarak Bizans’ın Anadolu ile bağını koparmıştır. Orhan Bey dönemi ilklerin dönemidir: İlk düzenli ordu (Yaya ve Müsellem), ilk medrese (İznik), ilk gümüş akçe ve ilk vezirlik teşkilatı bu dönemde kurulmuştur. Ayrıca Çimpe Kalesi’nin alınmasıyla Osmanlı ilk kez Rumeli topraklarına ayak basmış ve Balkan fetihlerinin kapısını açmıştır. Orhan Bey, teşkilatçı yapısıyla imparatorluğun kurumsal temellerini atmıştır.',
         keyPoints: [
           'Bursa\'nın Fethi (1326) - Başkent',
           'İznik ve İzmit\'in fethi',
@@ -375,14 +375,14 @@ export const topics: Topic[] = [
     description: 'Fatih\'ten Kanuni\'ye kadar olan altın çağ (1453-1579)',
     icon: 'Crown',
     color: '#C8A951',
-    questionCount: 22,
+    questionCount: 10,
     isPremium: true,
     subtopics: [
       {
         id: 'osmanli-yukselme-1',
         topicId: 'osmanli-yukselme',
         title: 'İstanbul\'un Fethi (1453)',
-        content: 'Fatih Sultan Mehmet, 29 Mayıs 1453\'te İstanbul\'u fethederek Orta Çağ\'ı sona erdirmiş ve Yeni Çağ\'ı başlatmıştır.',
+        content: '29 Mayıs 1453 tarihinde gerçekleşen İstanbul\'un fethi, dünya tarihinin en sarsıcı olaylarından biridir. Yüzyıllardır aşılamayan surlar, genç padişah II. Mehmet\'in (Fatih) askeri mühendislik harikası olan "Şahi" topları ve zekice tasarlanmış gemileri karadan yürütme stratejisiyle aşılmıştır. Bu fetihle birlikte Bizans İmparatorluğu tarihe karışmış, Osmanlı Devleti ise tam anlamıyla bir İmparatorluk statüsü kazanmıştır. Tarihsel açıdan bir çağ kapatıp (Orta Çağ), bir çağ açan (Yeni Çağ) bu olay, Avrupa\'da derebeyliklerin yıkılmasına ve Rönesans\'ın tetiklenmesine yol açmıştır. Fatih Sultan Mehmet, fetihten sonra şehri bir bilim ve kültür merkezi haline getirerek "Fatih" unvanının hakkını vermiş ve Osmanlı\'yı cihanşümul bir vizyona kavuşturmuştur.',
         keyPoints: [
           '29 Mayıs 1453 - Fatih Sultan Mehmet',
           'Orta Çağ sona erdi, Yeni Çağ başladı',
@@ -425,7 +425,7 @@ export const topics: Topic[] = [
         id: 'osmanli-yukselme-4',
         topicId: 'osmanli-yukselme',
         title: 'Yavuz Sultan Selim Dönemi',
-        content: 'Yavuz Sultan Selim döneminde Osmanlı Devleti doğuya yönelmiş, Safevi ve Memlük tehditleri ortadan kaldırılmıştır.',
+        content: 'Yavuz Sultan Selim, babası II. Bayezid’den devraldığı tahtta sadece 8 yıl kalmasına rağmen, Osmanlı tarihinin en keskin dönüşümlerinden birine imza atmıştır. "Doğu Siyaseti"ni merkeze alan Yavuz, Safevi hükümdarı Şah İsmail’i 1514 Çaldıran Zaferi ile durdurarak Anadolu’nun Şii tehdidi altına girmesini engellemiştir. Hemen ardından Memlük Devleti üzerine düzenlediği Mısır seferiyle Suriye, Filistin ve Mısır’ı fethetmiştir. Bu fetihlerin en büyük sonucu, Halifelik makamının Osmanlı’ya geçmesi ve kutsal emanetlerin İstanbul’a getirilmesidir. Yavuz döneminde hazine o kadar dolmuştur ki, kapısı mühürlenmiş ve kendisinden sonra gelen hiçbir padişahın hazineyi bu kadar dolduramayacağı söylenmiştir.',
         keyPoints: [
           'Çaldıran Savaşı (1514) - Safeviler\'e karşı zafer',
           'Mercidabık Savaşı (1516) - Suriye ve Filistin',
@@ -440,7 +440,7 @@ export const topics: Topic[] = [
         id: 'osmanli-yukselme-5',
         topicId: 'osmanli-yukselme',
         title: 'Kanuni Sultan Süleyman Dönemi',
-        content: 'Kanuni Sultan Süleyman dönemi Osmanlı\'nın en parlak dönemidir. 46 yıl padişahlık yapmış, imparatorluk en geniş sınırlarına ulaşmıştır.',
+        content: 'Kanuni Sultan Süleyman’ın 46 yıllık saltanatı, Osmanlı İmparatorluğu’nun her alanda zirveye ulaştığı "Muhteşem Yüzyıl"dır. Batı’da "Muhteşem", Doğu’da ise adil yönetiminden dolayı "Kanuni" olarak anılmıştır. Mohaç Meydan Muharebesi ile Macaristan’ı sadece 2 saatte dize getiren Kanuni, Osmanlı’yı Avrupa siyasetinin mutlak hakimi yapmıştır. Mimar Sinan’ın Süleymaniye gibi şaheserleriyle sanatta, Barbaros Hayreddin Paşa’nın Preveze Zaferi ile denizlerde cihan hakimiyeti pekişmiştir. Ancak bu parlak devirde Fransa’ya verilen kapitülasyonlar gibi stratejik hamleler, ilerleyen yüzyıllarda ekonomik olarak devletin elini zayıflatacak bir miras da bırakmıştır. Kanuni, sadece bir fatih değil, aynı zamanda koca bir çağa damgasını vuran bir devlet adamıdır.',
         keyPoints: [
           'Mohaç Meydan Muharebesi (1526) - Macaristan fethi',
           'I. Viyana Kuşatması (1529)',
@@ -474,14 +474,14 @@ export const topics: Topic[] = [
     description: 'XVII. yüzyılda duraklama süreci ve iç sorunlar (1579-1699)',
     icon: 'Shield',
     color: '#5D6D7E',
-    questionCount: 16,
+    questionCount: 7,
     isPremium: true,
     subtopics: [
       {
         id: 'osmanli-duraklama-1',
         topicId: 'osmanli-duraklama',
         title: 'Duraklama Nedenleri',
-        content: 'Osmanlı Devleti\'nin duraklama dönemine girmesinin iç ve dış nedenleri bulunmaktadır.',
+        content: 'XVII. yüzyıla gelindiğinde Osmanlı İmparatorluğu, cihanşümul gücünü korumakta zorlanmaya başlamış ve "Duraklama" olarak adlandırılan sürece girmiştir. Bu duraklamanın temelinde, ordunun omurgası olan Yeniçeri Ocağı’nın ve toprak sisteminin (Tımar) bozulması yatmaktadır. "Şehzadelerin sancağa çıkma" usulünün kaldırılarak "Kafes Sistemi"ne geçilmesi, tecrübesiz padişahların tahta çıkmasına ve merkezi otoritenin zayıflamasına yol açmıştır. Dışarıda ise Coğrafi Keşifler ile ticaret yollarının değişmesi Osmanlı ekonomisine büyük darbe vurmuş, Avrupa’da gerçekleşen Rönesans ve Reform hareketleri aradaki teknolojik ve zihniyet farkının açılmasına neden olmuştur. Osmanlı, artık "doğal sınırlarına" ulaşmış ve fetih hızını kaybetmiştir.',
         keyPoints: [
           'İç Nedenler: Yeniçeri Ocağı\'nın bozulması',
           'Tımar sisteminin bozulması',
@@ -545,7 +545,7 @@ export const topics: Topic[] = [
     description: 'XVIII. yüzyılda gerileme ve ıslahat hareketleri (1699-1792)',
     icon: 'Scale',
     color: '#7D3C98',
-    questionCount: 18,
+    questionCount: 6,
     isPremium: true,
     subtopics: [
       {
@@ -613,14 +613,14 @@ export const topics: Topic[] = [
     description: 'XIX. yüzyılda dağılma, ıslahat ve meşrutiyet (1792-1922)',
     icon: 'Landmark',
     color: '#6C3483',
-    questionCount: 22,
+    questionCount: 10,
     isPremium: true,
     subtopics: [
       {
         id: 'osmanli-dagilma-1',
         topicId: 'osmanli-dagilma',
         title: 'II. Mahmud Dönemi Islahatları',
-        content: 'II. Mahmud, Osmanlı tarihinin en köklü ıslahatlarını gerçekleştirmiştir. Yeniçeri Ocağı\'nı kaldırmış, modern devlet yapısının temellerini atmıştır.',
+        content: 'II. Mahmud, Osmanlı tarihinin en radikal ve köklü değişimlerini gerçekleştiren "devrimci" bir padişahtır. Devletin bekası için eski kurumların artık engel olduğuna inanmış ve 1826 yılında "Vaka-i Hayriye" (Hayırlı Olay) ile Yeniçeri Ocağı’nı tamamen kaldırmıştır. Bu hamleyle padişahın otoritesi önündeki en büyük engel kalkmış ve modern ordunun (Asakir-i Mansure-i Muhammediye) temelleri atılmıştır. Sadece askeri değil, idari ve sosyal alanda da devrimler yapmıştır: Bakanlıklara (Nezaretlere) geçilmiş, ilk nüfus sayımı yapılmış, kılık kıyafet düzenlemesiyle devlet memurlarına fes ve pantolon zorunluluğu getirilmiştir. II. Mahmud, "Ben tebaamdan Müslümanı camide, Hristiyanı kilisede, Yahudiyi havrada görmek isterim" diyerek modern ve eşitlikçi bir vatandaşlık anlayışının da tohumlarını atmıştır.',
         keyPoints: [
           'Yeniçeri Ocağı\'nın kaldırılması (Vaka-i Hayriye, 1826)',
           'Asakir-i Mansure-i Muhammediye - Yeni ordu',
@@ -716,7 +716,7 @@ export const topics: Topic[] = [
     description: 'Milli Mücadele, Cumhuriyet\'in ilanı ve Atatürk inkılapları',
     icon: 'Star',
     color: '#C0392B',
-    questionCount: 28,
+    questionCount: 14,
     isPremium: false,
     subtopics: [
       {
@@ -767,7 +767,7 @@ export const topics: Topic[] = [
         id: 'inkilap-4',
         topicId: 'inkilap-tarihi',
         title: 'Kurtuluş Savaşı Cepheleri',
-        content: 'Kurtuluş Savaşı\'nda Doğu, Güney ve Batı cephelerinde mücadele verilmiştir.',
+        content: 'Kurtuluş Savaşı, yokluklar içindeki bir milletin üç farklı cephede verdiği varoluş mücadelesidir. Doğu Cephesi’nde Kazım Karabekir önderliğinde Ermenilere karşı kazanılan zafer, Milli Mücadele’nin ilk askeri başarısı olup moral kaynağı olmuştur. Güney Cephesi’nde ise halkın bizzat kendi imkanlarıyla yürüttüğü direniş (Antep, Maraş, Urfa), Fransız işgalini durdurmuştur. Asıl büyük ve belirleyici mücadele Batı Cephesi’nde Yunanlılara karşı verilmiştir. İnönü Savaşları ile başlayan süreç, Kütahya-Eskişehir’deki taktiksel geri çekilmenin ardından 22 gün 22 gece süren efsanevi Sakarya Meydan Muharebesi ile "savunma"dan "taarruz"a dönmüştür. 26 Ağustos 1922’de başlayan Büyük Taarruz, 9 Eylül’de İzmir’in kurtuluşuyla sonuçlanmış ve Anadolu toprakları işgalden temizlenmiştir.',
         keyPoints: [
           'Doğu Cephesi: Ermenilere karşı - Gümrü Antlaşması (1920)',
           'Güney Cephesi: Fransızlara karşı - Antep, Maraş, Urfa savunmaları',
@@ -798,7 +798,7 @@ export const topics: Topic[] = [
         id: 'inkilap-6',
         topicId: 'inkilap-tarihi',
         title: 'Atatürk İlkeleri',
-        content: 'Atatürk\'ün altı temel ilkesi Cumhuriyet\'in temel taşlarıdır ve 1937\'de anayasaya girmiştir.',
+        content: 'Atatürk İlkeleri, modern Türkiye Cumhuriyeti’nin üzerine inşa edildiği fikri temeldir. Cumhuriyetçilik, egemenliğin şartsız olarak millete ait olduğunu; Milliyetçilik, ortak bir gelecek etrafında kenetlenmiş milli birliği; Halkçılık ise toplumun hiçbir zümresine ayrıcalık tanınmayan eşitlikçi yapıyı temsil eder. Laiklik, din ve devlet işlerinin ayrılmasını sağlayarak özgür düşüncenin önünü açarken; Devletçilik, savaş yorgunu bir milletin ekonomisini canlandırmak için devletin lokomotif görevini üstlenmesidir. Son olarak İnkılapçılık, tüm bu ilkelerin durağan kalmamasını, her zaman çağdaş uygarlık seviyesine ulaşmak için yenilenmeyi esas alır.',
         keyPoints: [
           'Cumhuriyetçilik - Egemenlik milletindir',
           'Milliyetçilik - Milli birlik ve beraberlik',
@@ -849,7 +849,7 @@ export const topics: Topic[] = [
     description: 'Coğrafi Keşifler, Rönesans, Reform, Aydınlanma ve devrimler',
     icon: 'Compass',
     color: '#D4AC0D',
-    questionCount: 16,
+    questionCount: 8,
     isPremium: true,
     subtopics: [
       {
@@ -918,7 +918,7 @@ export const topics: Topic[] = [
     description: 'I. ve II. Dünya Savaşları, nedenleri ve sonuçları',
     icon: 'Globe',
     color: '#1B7A4E',
-    questionCount: 18,
+    questionCount: 8,
     isPremium: true,
     subtopics: [
       {
@@ -991,7 +991,7 @@ export const topics: Topic[] = [
     description: 'Atatürk sonrası Türkiye tarihi ve dış politika',
     icon: 'Flag',
     color: '#E74C3C',
-    questionCount: 14,
+    questionCount: 6,
     isPremium: true,
     subtopics: [
       {

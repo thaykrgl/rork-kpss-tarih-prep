@@ -147,6 +147,10 @@ export const [StudyProvider, useStudy] = createContextHook(() => {
     });
   }, [saveMutation]);
 
+  const addDailyProgress = useCallback((questionsCount: number, correctCount: number) => {
+    updateDailyStudy(questionsCount, correctCount, 0);
+  }, [updateDailyStudy]);
+
   const addQuizResult = useCallback((result: QuizResult, wrongAnswersList?: WrongAnswer[]) => {
     setProgress((prev) => {
       const updated: UserProgress = {
@@ -301,6 +305,7 @@ export const [StudyProvider, useStudy] = createContextHook(() => {
     toggleBookmarkTopic,
     toggleBookmarkSubtopic,
     addQuizResult,
+    addDailyProgress,
     isTopicBookmarked,
     isSubtopicBookmarked,
     getTopicQuizResults,
