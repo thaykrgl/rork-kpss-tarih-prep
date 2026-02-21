@@ -40,6 +40,26 @@ function RootLayoutNav() {
         name="paywall"
         options={{ headerShown: false, animation: "slide_from_bottom", presentation: "modal" }}
       />
+      <Stack.Screen
+        name="dictionary/index"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
+      <Stack.Screen
+        name="timeline/index"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
+      <Stack.Screen
+        name="mock-exam/index"
+        options={{ headerShown: false, animation: "slide_from_bottom" }}
+      />
+      <Stack.Screen
+        name="analysis/index"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
+      <Stack.Screen
+        name="maps/index"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
     </Stack>
   );
 }

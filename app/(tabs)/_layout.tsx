@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { BookOpen, Trophy, Bookmark, Brain } from "lucide-react-native";
+import { BookOpen, Trophy, Bookmark, Brain, Settings } from "lucide-react-native";
 import React from "react";
 import { Platform } from "react-native";
 import { useTheme } from "@/providers/ThemeProvider";
@@ -50,6 +50,13 @@ export default function TabLayout() {
         options={{
           title: "Kaydedilenler",
           tabBarIcon: ({ color, size }) => <Bookmark color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Ayarlar",
+          tabBarIcon: ({ color, size }) => <Settings color={color} size={size} />,
         }}
       />
     </Tabs>

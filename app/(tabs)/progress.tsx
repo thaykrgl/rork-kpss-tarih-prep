@@ -1,16 +1,13 @@
-import React, { useRef, useEffect, useMemo, useState } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   Animated,
-  TouchableOpacity,
-  Modal,
-  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Trophy, Target, CheckCircle, TrendingUp, Clock, Flame, Calendar, Sun, Moon, Monitor } from 'lucide-react-native';
+import { Trophy, Target, CheckCircle, TrendingUp, Flame, Calendar, Clock } from 'lucide-react-native';
 import { useStudy } from '@/providers/StudyProvider';
 import { useTheme } from '@/providers/ThemeProvider';
 import { topics } from '@/mocks/topics';
@@ -19,14 +16,10 @@ export default function ProgressScreen() {
   const { 
     progress, 
     overallAccuracy, 
-    getTodayStudy, 
-    toggleNotifications, 
-    setReminderTime,
-    setTheme
+    getTodayStudy,
   } = useStudy();
-  const { colors, themeMode } = useTheme();
+  const { colors } = useTheme();
   
-  const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
   const progressAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const todayStudy = getTodayStudy();
@@ -114,40 +107,6 @@ export default function ProgressScreen() {
             </View>
           </Animated.View>
 
-          <Text style={themedStyles.sectionTitle}>Görünüm Ayarları</Text>
-          <View style={themedStyles.settingsCard}>
-            <View style={themedStyles.settingInfo}>
-              <Sun color={colors.primary} size={20} />
-              <View>
-                <Text style={themedStyles.settingTitle}>Tema</Text>
-                <Text style={themedStyles.settingSub}>Uygulama görünümünü değiştirin</Text>
-              </View>
-            </View>
-            <View style={themedStyles.themeOptions}>
-              <TouchableOpacity 
-                style={[themedStyles.themeBtn, themeMode === 'light' && themedStyles.themeBtnActive]} 
-                onPress={() => setTheme('light')}
-              >
-                <Sun size={16} color={themeMode === 'light' ? colors.primary : colors.textSecondary} />
-                <Text style={[themedStyles.themeBtnText, themeMode === 'light' && themedStyles.themeBtnTextActive]}>Aydınlık</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[themedStyles.themeBtn, themeMode === 'dark' && themedStyles.themeBtnActive]} 
-                onPress={() => setTheme('dark')}
-              >
-                <Moon size={16} color={themeMode === 'dark' ? colors.primary : colors.textSecondary} />
-                <Text style={[themedStyles.themeBtnText, themeMode === 'dark' && themedStyles.themeBtnTextActive]}>Karanlık</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[themedStyles.themeBtn, themeMode === 'system' && themedStyles.themeBtnActive]} 
-                onPress={() => setTheme('system')}
-              >
-                <Monitor size={16} color={themeMode === 'system' ? colors.primary : colors.textSecondary} />
-                <Text style={[themedStyles.themeBtnText, themeMode === 'system' && themedStyles.themeBtnTextActive]}>Sistem</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
           <Text style={themedStyles.sectionTitle}>Haftalık Aktivite</Text>
           <View style={themedStyles.weeklyChart}>
             {weeklyData.map((day, i) => (
@@ -197,7 +156,7 @@ export default function ProgressScreen() {
             </View>
             <View style={themedStyles.gridItem}>
               <View style={[themedStyles.gridIcon, { backgroundColor: colors.error + '18' }]}>
-                <Clock color={colors.error} size={20} />
+                <Clock size={20} color={colors.error} />
               </View>
               <Text style={themedStyles.gridValue}>
                 {(progress.wrongAnswers || []).length}
@@ -248,92 +207,6 @@ export default function ProgressScreen() {
               </View>
             );
           })}
-
-          <Text style={themedStyles.sectionTitle}>Bildirim Ayarları</Text>
-          <View style={themedStyles.settingsCard}>
-            <View style={themedStyles.settingRow}>
-              <View style={themedStyles.settingInfo}>
-                <Clock color={colors.primary} size={20} />
-                <View>
-                  <Text style={themedStyles.settingTitle}>Günlük Hatırlatıcı</Text>
-                  <Text style={themedStyles.settingSub}>Her gün çalışma vaktini hatırlat</Text>
-                </View>
-              </View>
-              <TouchableOpacity 
-                style={[themedStyles.toggle, progress.notificationsEnabled ? themedStyles.toggleOn : themedStyles.toggleOff]}
-                onPress={() => toggleNotifications(!progress.notificationsEnabled)}
-              >
-                <View style={[themedStyles.toggleCircle, progress.notificationsEnabled ? themedStyles.toggleCircleOn : themedStyles.toggleCircleOff]} />
-              </TouchableOpacity>
-            </View>
-            
-            {progress.notificationsEnabled && (
-              <View style={[themedStyles.settingRow, { marginTop: 16, borderTopWidth: 1, borderTopColor: colors.borderLight, paddingTop: 16 }]}>
-                <View style={themedStyles.settingInfo}>
-                  <Calendar color={colors.primary} size={20} />
-                  <View>
-                    <Text style={themedStyles.settingTitle}>Hatırlatma Saati</Text>
-                    <Text style={themedStyles.settingSub}>Her gün saat {progress.reminderTime?.hour}:00'da</Text>
-                  </View>
-                </View>
-                <TouchableOpacity 
-                  style={themedStyles.timeBtn}
-                  onPress={() => setIsTimePickerVisible(true)}
-                >
-                  <Text style={themedStyles.timeBtnText}>Değiştir</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-
-          <Modal
-            visible={isTimePickerVisible}
-            transparent
-            animationType="fade"
-            onRequestClose={() => setIsTimePickerVisible(false)}
-          >
-            <Pressable 
-              style={themedStyles.modalOverlay} 
-              onPress={() => setIsTimePickerVisible(false)}
-            >
-              <View style={themedStyles.pickerContainer}>
-                <View style={themedStyles.pickerHeader}>
-                  <Text style={themedStyles.pickerTitle}>Saat Seçin</Text>
-                  <TouchableOpacity 
-                    onPress={() => setIsTimePickerVisible(false)}
-                    hitSlop={10}
-                  >
-                    <Text style={themedStyles.pickerClose}>Kapat</Text>
-                  </TouchableOpacity>
-                </View>
-                <ScrollView style={themedStyles.hourList} showsVerticalScrollIndicator={false}>
-                  {Array.from({ length: 24 }).map((_, h) => (
-                    <TouchableOpacity
-                      key={h}
-                      style={[
-                        themedStyles.hourItem,
-                        progress.reminderTime?.hour === h && themedStyles.hourItemActive
-                      ]}
-                      onPress={() => {
-                        setReminderTime(h, 0);
-                        setIsTimePickerVisible(false);
-                      }}
-                    >
-                      <Text style={[
-                        themedStyles.hourText,
-                        progress.reminderTime?.hour === h && themedStyles.hourTextActive
-                      ]}>
-                        {h < 10 ? `0${h}` : h}:00
-                      </Text>
-                      {progress.reminderTime?.hour === h && (
-                        <CheckCircle color={colors.primary} size={18} />
-                      )}
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </View>
-            </Pressable>
-          </Modal>
 
           <View style={themedStyles.bottomSpacer} />
         </ScrollView>
@@ -561,162 +434,6 @@ const styles = (colors: any) => StyleSheet.create({
     fontWeight: '700' as const,
     minWidth: 36,
     textAlign: 'right' as const,
-  },
-  settingsCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 18,
-    marginBottom: 16,
-    shadowColor: colors.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  settingInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  settingTitle: {
-    fontSize: 15,
-    fontWeight: '700' as const,
-    color: colors.text,
-  },
-  settingSub: {
-    fontSize: 12,
-    color: colors.textLight,
-    marginTop: 1,
-  },
-  toggle: {
-    width: 44,
-    height: 24,
-    borderRadius: 12,
-    padding: 2,
-    justifyContent: 'center',
-  },
-  toggleOn: {
-    backgroundColor: colors.primary,
-  },
-  toggleOff: {
-    backgroundColor: colors.border,
-  },
-  toggleCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: colors.white,
-  },
-  toggleCircleOn: {
-    alignSelf: 'flex-end',
-  },
-  toggleCircleOff: {
-    alignSelf: 'flex-start',
-  },
-  timeBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: colors.borderLight,
-  },
-  timeBtnText: {
-    fontSize: 12,
-    fontWeight: '600' as const,
-    color: colors.primary,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  pickerContainer: {
-    width: '100%',
-    maxHeight: '60%',
-    backgroundColor: colors.surface,
-    borderRadius: 24,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  pickerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 4,
-  },
-  pickerTitle: {
-    fontSize: 18,
-    fontWeight: '800' as const,
-    color: colors.primary,
-  },
-  pickerClose: {
-    fontSize: 14,
-    fontWeight: '600' as const,
-    color: colors.textSecondary,
-  },
-  hourList: {
-    flexGrow: 0,
-  },
-  hourItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginBottom: 4,
-  },
-  hourItemActive: {
-    backgroundColor: colors.primary + '08',
-  },
-  hourText: {
-    fontSize: 16,
-    fontWeight: '500' as const,
-    color: colors.text,
-  },
-  hourTextActive: {
-    fontWeight: '700' as const,
-    color: colors.primary,
-  },
-  themeOptions: {
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 12,
-  },
-  themeBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: colors.surfaceAlt,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  themeBtnActive: {
-    backgroundColor: colors.primary + '15',
-    borderColor: colors.primary,
-  },
-  themeBtnText: {
-    fontSize: 12,
-    fontWeight: '600' as const,
-    color: colors.textSecondary,
-  },
-  themeBtnTextActive: {
-    color: colors.primary,
   },
   bottomSpacer: {
     height: 40,
