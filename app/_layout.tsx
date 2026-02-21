@@ -5,6 +5,8 @@ import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StudyProvider } from "@/providers/StudyProvider";
 import { PremiumProvider } from "@/providers/PremiumProvider";
+import { NotificationProvider } from "@/providers/NotificationProvider";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -52,7 +54,11 @@ export default function RootLayout() {
       <GestureHandlerRootView>
         <PremiumProvider>
           <StudyProvider>
-            <RootLayoutNav />
+            <ThemeProvider>
+              <NotificationProvider>
+                <RootLayoutNav />
+              </NotificationProvider>
+            </ThemeProvider>
           </StudyProvider>
         </PremiumProvider>
       </GestureHandlerRootView>

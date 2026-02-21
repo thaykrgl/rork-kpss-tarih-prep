@@ -10,12 +10,12 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BookOpen, ChevronRight, Flame, Search, X, Target, Lock, Crown } from 'lucide-react-native';
+import { BookOpen, ChevronRight, Flame, Search, X, Lock, Crown } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import Colors from '@/constants/colors';
 import { topics } from '@/mocks/topics';
 import { useStudy } from '@/providers/StudyProvider';
 import { usePremium } from '@/providers/PremiumProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 
 const ICON_MAP: Record<string, React.ComponentType<{ color: string; size: number }>> = {
   Castle: require('lucide-react-native').Castle,
@@ -35,11 +35,15 @@ const ICON_MAP: Record<string, React.ComponentType<{ color: string; size: number
 export default function HomeScreen() {
   const router = useRouter();
   const { progress, overallAccuracy, getTodayStudy } = useStudy();
-  const { isPremium, canAccessTopic } = usePremium();
+  const { isPremium } = usePremium();
+  const { colors } = useTheme();
+  
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const [searchQuery, setSearchQuery] = useState<string>('');
   const todayStudy = getTodayStudy();
+
+  const themedStyles = useMemo(() => styles(colors), [colors]);
 
   useEffect(() => {
     Animated.parallel([
@@ -105,64 +109,63 @@ export default function HomeScreen() {
             {
               translateY: slideAnim.interpolate({
                 inputRange: [0, 30],
-                outputRange: [0, 30 + index * 6],
+                outputRange: [0, 30 + index * 4],
               }),
             },
           ],
         }}
       >
         <TouchableOpacity
-          style={[styles.topicCard, isLocked && styles.topicCardLocked]}
+          style={[themedStyles.topicCard, isLocked && themedStyles.topicCardLocked]}
           activeOpacity={0.7}
           onPress={() => handleTopicPress(topic.id, topic.isPremium)}
-          testID={`topic-card-${topic.id}`}
         >
           <View
             style={[
-              styles.topicIconContainer,
-              { backgroundColor: isLocked ? Colors.textLight + '15' : topic.color + '15' },
+              themedStyles.topicIconContainer,
+              { backgroundColor: isLocked ? colors.textLight + '15' : topic.color + '15' },
             ]}
           >
             {IconComponent && (
-              <IconComponent color={isLocked ? Colors.textLight : topic.color} size={22} />
+              <IconComponent color={isLocked ? colors.textLight : topic.color} size={22} />
             )}
           </View>
-          <View style={styles.topicInfo}>
-            <View style={styles.topicTitleRow}>
-              <Text style={[styles.topicTitle, isLocked && styles.topicTitleLocked]} numberOfLines={1}>
+          <View style={themedStyles.topicInfo}>
+            <View style={themedStyles.topicTitleRow}>
+              <Text style={[themedStyles.topicTitle, isLocked && themedStyles.topicTitleLocked]} numberOfLines={1}>
                 {topic.title}
               </Text>
               {topic.isPremium && !isPremium && (
-                <View style={styles.premiumBadge}>
+                <View style={themedStyles.premiumBadge}>
                   <Crown color="#FFD700" size={10} />
-                  <Text style={styles.premiumBadgeText}>PRO</Text>
+                  <Text style={themedStyles.premiumBadgeText}>PRO</Text>
                 </View>
               )}
             </View>
-            <Text style={[styles.topicDescription, isLocked && styles.topicDescLocked]} numberOfLines={1}>
+            <Text style={[themedStyles.topicDescription, isLocked && themedStyles.topicDescLocked]} numberOfLines={1}>
               {topic.description}
             </Text>
-            <View style={styles.topicMeta}>
-              <Text style={styles.topicMetaText}>
+            <View style={themedStyles.topicMeta}>
+              <Text style={themedStyles.topicMetaText}>
                 {topic.subtopics.length} alt konu
               </Text>
-              <View style={styles.dot} />
-              <Text style={styles.topicMetaText}>
+              <View style={themedStyles.dot} />
+              <Text style={themedStyles.topicMetaText}>
                 {topic.questionCount} soru
               </Text>
               {bestScore !== null && (
                 <>
-                  <View style={styles.dot} />
+                  <View style={themedStyles.dot} />
                   <Text
                     style={[
-                      styles.topicMetaText,
+                      themedStyles.topicMetaText,
                       {
                         color:
                           bestScore >= 70
-                            ? Colors.success
+                            ? colors.success
                             : bestScore >= 50
-                            ? Colors.warning
-                            : Colors.error,
+                            ? colors.warning
+                            : colors.error,
                       },
                     ]}
                   >
@@ -173,9 +176,9 @@ export default function HomeScreen() {
             </View>
           </View>
           {isLocked ? (
-            <Lock color={Colors.textLight} size={18} />
+            <Lock color={colors.textLight} size={18} />
           ) : (
-            <ChevronRight color={Colors.textLight} size={20} />
+            <ChevronRight color={colors.textLight} size={20} />
           )}
         </TouchableOpacity>
       </Animated.View>
@@ -183,127 +186,126 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={styles.safeArea}>
+    <View style={themedStyles.container}>
+      <SafeAreaView edges={['top']} style={themedStyles.safeArea}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={themedStyles.scrollContent}
         >
           <Animated.View
             style={[
-              styles.header,
+              themedStyles.header,
               { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
             ]}
           >
-            <View style={styles.headerTop}>
+            <View style={themedStyles.headerTop}>
               <View>
-                <Text style={styles.greeting}>KPSS Tarih</Text>
-                <Text style={styles.subtitle}>Hazırlık Platformu</Text>
+                <Text style={themedStyles.greeting}>KPSS Tarih</Text>
+                <Text style={themedStyles.subtitle}>Hazırlık Platformu</Text>
               </View>
-              <View style={styles.headerBadges}>
+              <View style={themedStyles.headerBadges}>
                 {(progress.currentStreak || 0) > 0 && (
-                  <View style={styles.streakBadge}>
+                  <View style={themedStyles.streakBadge}>
                     <Flame color="#FF6B35" size={14} />
-                    <Text style={styles.streakBadgeText}>{progress.currentStreak}</Text>
+                    <Text style={themedStyles.streakBadgeText}>{progress.currentStreak}</Text>
                   </View>
                 )}
                 {isPremium ? (
-                  <View style={styles.proBadge}>
+                  <View style={themedStyles.proBadge}>
                     <Crown color="#FFD700" size={14} />
-                    <Text style={styles.proBadgeText}>PRO</Text>
+                    <Text style={themedStyles.proBadgeText}>PRO</Text>
                   </View>
                 ) : (
                   <TouchableOpacity
-                    style={styles.upgradeBtn}
+                    style={themedStyles.upgradeBtn}
                     activeOpacity={0.7}
                     onPress={() => router.push('/paywall' as any)}
                   >
                     <Crown color="#FFD700" size={14} />
-                    <Text style={styles.upgradeBtnText}>Premium</Text>
+                    <Text style={themedStyles.upgradeBtnText}>Premium</Text>
                   </TouchableOpacity>
                 )}
               </View>
             </View>
 
-            <View style={styles.dailyCard}>
-              <View style={styles.dailyCardTop}>
-                <Text style={styles.dailyLabel}>Günlük Hedef</Text>
-                <Text style={styles.dailyValue}>
+            <View style={themedStyles.dailyCard}>
+              <View style={themedStyles.dailyCardTop}>
+                <Text style={themedStyles.dailyLabel}>Günlük Hedef</Text>
+                <Text style={themedStyles.dailyValue}>
                   {todayStudy?.questionsAnswered ?? 0}/{progress.dailyGoal || 10}
                 </Text>
               </View>
-              <View style={styles.dailyBarBg}>
-                <View style={[styles.dailyBarFill, { width: `${dailyProgress}%` }]} />
+              <View style={themedStyles.dailyBarBg}>
+                <View style={[themedStyles.dailyBarFill, { width: `${dailyProgress}%` }]} />
               </View>
             </View>
 
-            <View style={styles.statsRow}>
-              <View style={styles.statCard}>
-                <Text style={styles.statValue}>{totalQuestions}</Text>
-                <Text style={styles.statLabel}>Toplam Soru</Text>
+            <View style={themedStyles.statsRow}>
+              <View style={themedStyles.statCard}>
+                <Text style={themedStyles.statValue}>{totalQuestions}</Text>
+                <Text style={themedStyles.statLabel}>Toplam Soru</Text>
               </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statCard}>
-                <Text style={styles.statValue}>{progress.totalQuestionsAnswered}</Text>
-                <Text style={styles.statLabel}>Çözülen</Text>
+              <View style={themedStyles.statDivider} />
+              <View style={themedStyles.statCard}>
+                <Text style={themedStyles.statValue}>{progress.totalQuestionsAnswered}</Text>
+                <Text style={themedStyles.statLabel}>Çözülen</Text>
               </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statCard}>
-                <Text style={styles.statValue}>%{overallAccuracy}</Text>
-                <Text style={styles.statLabel}>Başarı</Text>
+              <View style={themedStyles.statDivider} />
+              <View style={themedStyles.statCard}>
+                <Text style={themedStyles.statValue}>%{overallAccuracy}</Text>
+                <Text style={themedStyles.statLabel}>Başarı</Text>
               </View>
             </View>
           </Animated.View>
 
-          <View style={styles.searchContainer}>
-            <Search color={Colors.textLight} size={18} />
+          <View style={themedStyles.searchContainer}>
+            <Search color={colors.textLight} size={18} />
             <TextInput
-              style={styles.searchInput}
+              style={themedStyles.searchInput}
               placeholder="Konu ara..."
-              placeholderTextColor={Colors.textLight}
+              placeholderTextColor={colors.textLight}
               value={searchQuery}
               onChangeText={setSearchQuery}
-              testID="search-input"
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery('')} hitSlop={12}>
-                <X color={Colors.textLight} size={16} />
+                <X color={colors.textLight} size={16} />
               </TouchableOpacity>
             )}
           </View>
 
           {searchQuery.trim() ? (
             <>
-              <View style={styles.sectionHeader}>
-                <BookOpen color={Colors.primary} size={18} />
-                <Text style={styles.sectionTitle}>
+              <View style={themedStyles.sectionHeader}>
+                <BookOpen color={colors.primary} size={18} />
+                <Text style={themedStyles.sectionTitle}>
                   Sonuçlar ({filteredTopics.length})
                 </Text>
               </View>
               {filteredTopics.length === 0 && (
-                <View style={styles.noResults}>
-                  <Text style={styles.noResultsText}>Aramanızla eşleşen konu bulunamadı</Text>
+                <View style={themedStyles.noResults}>
+                  <Text style={themedStyles.noResultsText}>Aramanızla eşleşen konu bulunamadı</Text>
                 </View>
               )}
               {filteredTopics.map((topic, index) => renderTopicCard(topic, index))}
             </>
           ) : (
             <>
-              <View style={styles.sectionHeader}>
-                <BookOpen color={Colors.primary} size={18} />
-                <Text style={styles.sectionTitle}>Ücretsiz Konular</Text>
+              <View style={themedStyles.sectionHeader}>
+                <BookOpen color={colors.primary} size={18} />
+                <Text style={themedStyles.sectionTitle}>Ücretsiz Konular</Text>
               </View>
               {freeTopics.map((topic, index) => renderTopicCard(topic, index))}
 
-              <View style={[styles.sectionHeader, { marginTop: 10 }]}>
+              <View style={[themedStyles.sectionHeader, { marginTop: 10 }]}>
                 <Crown color="#FFD700" size={18} />
-                <Text style={styles.sectionTitle}>Premium Konular</Text>
+                <Text style={themedStyles.sectionTitle}>Premium Konular</Text>
                 {!isPremium && (
                   <TouchableOpacity
-                    style={styles.unlockAllBtn}
+                    style={themedStyles.unlockAllBtn}
                     onPress={() => router.push('/paywall' as any)}
                   >
-                    <Text style={styles.unlockAllText}>Hepsini Aç</Text>
+                    <Text style={themedStyles.unlockAllText}>Hepsini Aç</Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -311,17 +313,17 @@ export default function HomeScreen() {
             </>
           )}
 
-          <View style={styles.bottomSpacer} />
+          <View style={themedStyles.bottomSpacer} />
         </ScrollView>
       </SafeAreaView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   safeArea: {
     flex: 1,
@@ -342,12 +344,12 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 28,
     fontWeight: '800' as const,
-    color: Colors.primary,
+    color: colors.primary,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 15,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 2,
   },
   headerBadges: {
@@ -388,7 +390,7 @@ const styles = StyleSheet.create({
   upgradeBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -397,10 +399,10 @@ const styles = StyleSheet.create({
   upgradeBtnText: {
     fontSize: 12,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: colors.white,
   },
   dailyCard: {
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 14,
     padding: 14,
     marginBottom: 12,
@@ -414,12 +416,12 @@ const styles = StyleSheet.create({
   dailyLabel: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.accentLight,
+    color: colors.accentLight,
   },
   dailyValue: {
     fontSize: 14,
     fontWeight: '800' as const,
-    color: Colors.white,
+    color: colors.white,
   },
   dailyBarBg: {
     height: 6,
@@ -429,15 +431,15 @@ const styles = StyleSheet.create({
   },
   dailyBarFill: {
     height: '100%',
-    backgroundColor: Colors.accent,
+    backgroundColor: colors.accent,
     borderRadius: 3,
   },
   statsRow: {
     flexDirection: 'row',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
@@ -449,36 +451,36 @@ const styles = StyleSheet.create({
   },
   statDivider: {
     width: 1,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: colors.borderLight,
     marginVertical: 4,
   },
   statValue: {
     fontSize: 22,
     fontWeight: '800' as const,
-    color: Colors.primary,
+    color: colors.primary,
   },
   statLabel: {
     fontSize: 11,
-    color: Colors.textLight,
+    color: colors.textLight,
     marginTop: 2,
     fontWeight: '500' as const,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 10,
     marginBottom: 16,
     gap: 10,
     borderWidth: 1,
-    borderColor: Colors.borderLight,
+    borderColor: colors.borderLight,
   },
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: Colors.text,
+    color: colors.text,
     padding: 0,
   },
   sectionHeader: {
@@ -490,11 +492,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
     fontWeight: '700' as const,
-    color: Colors.primary,
+    color: colors.primary,
     flex: 1,
   },
   unlockAllBtn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 10,
@@ -502,7 +504,7 @@ const styles = StyleSheet.create({
   unlockAllText: {
     fontSize: 11,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: colors.white,
   },
   noResults: {
     padding: 30,
@@ -510,16 +512,16 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
   },
   topicCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -548,11 +550,11 @@ const styles = StyleSheet.create({
   topicTitle: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: colors.text,
     flexShrink: 1,
   },
   topicTitleLocked: {
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
   },
   premiumBadge: {
     flexDirection: 'row',
@@ -571,11 +573,11 @@ const styles = StyleSheet.create({
   },
   topicDescription: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   topicDescLocked: {
-    color: Colors.textLight,
+    color: colors.textLight,
   },
   topicMeta: {
     flexDirection: 'row',
@@ -583,14 +585,14 @@ const styles = StyleSheet.create({
   },
   topicMetaText: {
     fontSize: 11,
-    color: Colors.textLight,
+    color: colors.textLight,
     fontWeight: '500' as const,
   },
   dot: {
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: Colors.textLight,
+    backgroundColor: colors.textLight,
     marginHorizontal: 6,
   },
   bottomSpacer: {

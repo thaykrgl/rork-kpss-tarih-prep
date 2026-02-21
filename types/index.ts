@@ -76,6 +76,9 @@ export interface UserProgress {
   longestStreak: number;
   lastStudyDate: string;
   dailyGoal: number;
+  notificationsEnabled?: boolean;
+  reminderTime?: { hour: number; minute: number };
+  theme?: 'light' | 'dark' | 'system';
 }
 
 export interface Flashcard {

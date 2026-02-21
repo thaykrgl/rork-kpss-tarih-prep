@@ -19,6 +19,9 @@ const defaultProgress: UserProgress = {
   longestStreak: 0,
   lastStudyDate: '',
   dailyGoal: 10,
+  notificationsEnabled: true,
+  reminderTime: { hour: 20, minute: 0 },
+  theme: 'system',
 };
 
 function getTodayStr(): string {
@@ -230,6 +233,30 @@ export const [StudyProvider, useStudy] = createContextHook(() => {
     });
   }, [saveMutation]);
 
+  const toggleNotifications = useCallback((enabled: boolean) => {
+    setProgress((prev) => {
+      const updated = { ...prev, notificationsEnabled: enabled };
+      saveMutation.mutate(updated);
+      return updated;
+    });
+  }, [saveMutation]);
+
+  const setReminderTime = useCallback((hour: number, minute: number) => {
+    setProgress((prev) => {
+      const updated = { ...prev, reminderTime: { hour, minute } };
+      saveMutation.mutate(updated);
+      return updated;
+    });
+  }, [saveMutation]);
+
+  const setTheme = useCallback((theme: 'light' | 'dark' | 'system') => {
+    setProgress((prev) => {
+      const updated = { ...prev, theme };
+      saveMutation.mutate(updated);
+      return updated;
+    });
+  }, [saveMutation]);
+
   const resetProgress = useCallback(() => {
     save(defaultProgress);
   }, [save]);
@@ -285,6 +312,9 @@ export const [StudyProvider, useStudy] = createContextHook(() => {
     deleteNote,
     getSubtopicNotes,
     setDailyGoal,
+    toggleNotifications,
+    setReminderTime,
+    setTheme,
     getTodayStudy,
     resetProgress,
   };

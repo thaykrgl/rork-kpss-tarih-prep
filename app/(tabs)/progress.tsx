@@ -1,22 +1,37 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   Animated,
+  TouchableOpacity,
+  Modal,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Trophy, Target, CheckCircle, TrendingUp, Clock, Flame, Calendar } from 'lucide-react-native';
-import Colors from '@/constants/colors';
+import { Trophy, Target, CheckCircle, TrendingUp, Clock, Flame, Calendar, Sun, Moon, Monitor } from 'lucide-react-native';
 import { useStudy } from '@/providers/StudyProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 import { topics } from '@/mocks/topics';
 
 export default function ProgressScreen() {
-  const { progress, overallAccuracy, getTodayStudy } = useStudy();
+  const { 
+    progress, 
+    overallAccuracy, 
+    getTodayStudy, 
+    toggleNotifications, 
+    setReminderTime,
+    setTheme
+  } = useStudy();
+  const { colors, themeMode } = useTheme();
+  
+  const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
   const progressAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const todayStudy = getTodayStudy();
+
+  const themedStyles = useMemo(() => styles(colors), [colors]);
 
   useEffect(() => {
     Animated.parallel([
@@ -56,108 +71,142 @@ export default function ProgressScreen() {
   const maxWeekly = Math.max(...weeklyData.map((d) => d.count), 1);
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={styles.safeArea}>
+    <View style={themedStyles.container}>
+      <SafeAreaView edges={['top']} style={themedStyles.safeArea}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={themedStyles.scrollContent}
         >
-          <Text style={styles.title}>İlerleme</Text>
-          <Text style={styles.subtitle}>Çalışma performansınız</Text>
+          <Text style={themedStyles.title}>İlerleme</Text>
+          <Text style={themedStyles.subtitle}>Çalışma performansınız</Text>
 
-          <Animated.View style={[styles.mainCard, { opacity: fadeAnim }]}>
-            <View style={styles.accuracyHeader}>
-              <Trophy color={Colors.accent} size={24} />
-              <Text style={styles.accuracyTitle}>Genel Başarı Oranı</Text>
+          <Animated.View style={[themedStyles.mainCard, { opacity: fadeAnim }]}>
+            <View style={themedStyles.accuracyHeader}>
+              <Trophy color={colors.accent} size={24} />
+              <Text style={themedStyles.accuracyTitle}>Genel Başarı Oranı</Text>
             </View>
-            <Text style={styles.accuracyValue}>%{overallAccuracy}</Text>
-            <View style={styles.progressBarBg}>
-              <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
+            <Text style={themedStyles.accuracyValue}>%{overallAccuracy}</Text>
+            <View style={themedStyles.progressBarBg}>
+              <Animated.View style={[themedStyles.progressBarFill, { width: progressWidth }]} />
             </View>
-            <Text style={styles.accuracyHint}>
+            <Text style={themedStyles.accuracyHint}>
               {progress.totalQuestionsAnswered} sorudan {progress.totalCorrectAnswers} doğru
             </Text>
           </Animated.View>
 
-          <Animated.View style={[styles.streakSection, { opacity: fadeAnim }]}>
-            <View style={styles.streakItem}>
+          <Animated.View style={[themedStyles.streakSection, { opacity: fadeAnim }]}>
+            <View style={themedStyles.streakItem}>
               <Flame color="#FF6B35" size={20} />
-              <Text style={styles.streakItemValue}>{progress.currentStreak || 0}</Text>
-              <Text style={styles.streakItemLabel}>Mevcut Seri</Text>
+              <Text style={themedStyles.streakItemValue}>{progress.currentStreak || 0}</Text>
+              <Text style={themedStyles.streakItemLabel}>Mevcut Seri</Text>
             </View>
-            <View style={styles.streakDivider} />
-            <View style={styles.streakItem}>
-              <Calendar color={Colors.primary} size={20} />
-              <Text style={styles.streakItemValue}>{progress.longestStreak || 0}</Text>
-              <Text style={styles.streakItemLabel}>En Uzun Seri</Text>
+            <View style={themedStyles.streakDivider} />
+            <View style={themedStyles.streakItem}>
+              <Calendar color={colors.primary} size={20} />
+              <Text style={themedStyles.streakItemValue}>{progress.longestStreak || 0}</Text>
+              <Text style={themedStyles.streakItemLabel}>En Uzun Seri</Text>
             </View>
-            <View style={styles.streakDivider} />
-            <View style={styles.streakItem}>
-              <Target color={Colors.accent} size={20} />
-              <Text style={styles.streakItemValue}>{todayStudy?.questionsAnswered ?? 0}</Text>
-              <Text style={styles.streakItemLabel}>Bugün</Text>
+            <View style={themedStyles.streakDivider} />
+            <View style={themedStyles.streakItem}>
+              <Target color={colors.accent} size={20} />
+              <Text style={themedStyles.streakItemValue}>{todayStudy?.questionsAnswered ?? 0}</Text>
+              <Text style={themedStyles.streakItemLabel}>Bugün</Text>
             </View>
           </Animated.View>
 
-          <Text style={styles.sectionTitle}>Haftalık Aktivite</Text>
-          <View style={styles.weeklyChart}>
+          <Text style={themedStyles.sectionTitle}>Görünüm Ayarları</Text>
+          <View style={themedStyles.settingsCard}>
+            <View style={themedStyles.settingInfo}>
+              <Sun color={colors.primary} size={20} />
+              <View>
+                <Text style={themedStyles.settingTitle}>Tema</Text>
+                <Text style={themedStyles.settingSub}>Uygulama görünümünü değiştirin</Text>
+              </View>
+            </View>
+            <View style={themedStyles.themeOptions}>
+              <TouchableOpacity 
+                style={[themedStyles.themeBtn, themeMode === 'light' && themedStyles.themeBtnActive]} 
+                onPress={() => setTheme('light')}
+              >
+                <Sun size={16} color={themeMode === 'light' ? colors.primary : colors.textSecondary} />
+                <Text style={[themedStyles.themeBtnText, themeMode === 'light' && themedStyles.themeBtnTextActive]}>Aydınlık</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[themedStyles.themeBtn, themeMode === 'dark' && themedStyles.themeBtnActive]} 
+                onPress={() => setTheme('dark')}
+              >
+                <Moon size={16} color={themeMode === 'dark' ? colors.primary : colors.textSecondary} />
+                <Text style={[themedStyles.themeBtnText, themeMode === 'dark' && themedStyles.themeBtnTextActive]}>Karanlık</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[themedStyles.themeBtn, themeMode === 'system' && themedStyles.themeBtnActive]} 
+                onPress={() => setTheme('system')}
+              >
+                <Monitor size={16} color={themeMode === 'system' ? colors.primary : colors.textSecondary} />
+                <Text style={[themedStyles.themeBtnText, themeMode === 'system' && themedStyles.themeBtnTextActive]}>Sistem</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <Text style={themedStyles.sectionTitle}>Haftalık Aktivite</Text>
+          <View style={themedStyles.weeklyChart}>
             {weeklyData.map((day, i) => (
-              <View key={i} style={styles.weeklyBar}>
-                <View style={styles.weeklyBarOuter}>
+              <View key={i} style={themedStyles.weeklyBar}>
+                <View style={themedStyles.weeklyBarOuter}>
                   <View
                     style={[
-                      styles.weeklyBarInner,
+                      themedStyles.weeklyBarInner,
                       {
                         height: `${Math.max((day.count / maxWeekly) * 100, 4)}%`,
-                        backgroundColor: day.count > 0 ? Colors.primary : Colors.borderLight,
+                        backgroundColor: day.count > 0 ? colors.primary : colors.borderLight,
                       },
                     ]}
                   />
                 </View>
-                <Text style={[styles.weeklyLabel, i === 6 && { color: Colors.primary, fontWeight: '700' as const }]}>
+                <Text style={[themedStyles.weeklyLabel, i === 6 && { color: colors.primary, fontWeight: '700' as const }]}>
                   {day.label}
                 </Text>
                 {day.count > 0 && (
-                  <Text style={styles.weeklyCount}>{day.count}</Text>
+                  <Text style={themedStyles.weeklyCount}>{day.count}</Text>
                 )}
               </View>
             ))}
           </View>
 
-          <Animated.View style={[styles.statsGrid, { opacity: fadeAnim }]}>
-            <View style={styles.gridItem}>
-              <View style={[styles.gridIcon, { backgroundColor: Colors.accent + '18' }]}>
-                <Target color={Colors.accent} size={20} />
+          <Animated.View style={[themedStyles.statsGrid, { opacity: fadeAnim }]}>
+            <View style={themedStyles.gridItem}>
+              <View style={[themedStyles.gridIcon, { backgroundColor: colors.accent + '18' }]}>
+                <Target color={colors.accent} size={20} />
               </View>
-              <Text style={styles.gridValue}>{progress.completedQuizzes.length}</Text>
-              <Text style={styles.gridLabel}>Tamamlanan Test</Text>
+              <Text style={themedStyles.gridValue}>{progress.completedQuizzes.length}</Text>
+              <Text style={themedStyles.gridLabel}>Tamamlanan Test</Text>
             </View>
-            <View style={styles.gridItem}>
-              <View style={[styles.gridIcon, { backgroundColor: Colors.success + '18' }]}>
-                <CheckCircle color={Colors.success} size={20} />
+            <View style={themedStyles.gridItem}>
+              <View style={[themedStyles.gridIcon, { backgroundColor: colors.success + '18' }]}>
+                <CheckCircle color={colors.success} size={20} />
               </View>
-              <Text style={styles.gridValue}>{progress.totalCorrectAnswers}</Text>
-              <Text style={styles.gridLabel}>Doğru Cevap</Text>
+              <Text style={themedStyles.gridValue}>{progress.totalCorrectAnswers}</Text>
+              <Text style={themedStyles.gridLabel}>Doğru Cevap</Text>
             </View>
-            <View style={styles.gridItem}>
-              <View style={[styles.gridIcon, { backgroundColor: '#2E86AB18' }]}>
+            <View style={themedStyles.gridItem}>
+              <View style={[themedStyles.gridIcon, { backgroundColor: '#2E86AB18' }]}>
                 <TrendingUp color="#2E86AB" size={20} />
               </View>
-              <Text style={styles.gridValue}>{progress.totalQuestionsAnswered}</Text>
-              <Text style={styles.gridLabel}>Toplam Soru</Text>
+              <Text style={themedStyles.gridValue}>{progress.totalQuestionsAnswered}</Text>
+              <Text style={themedStyles.gridLabel}>Toplam Soru</Text>
             </View>
-            <View style={styles.gridItem}>
-              <View style={[styles.gridIcon, { backgroundColor: Colors.error + '18' }]}>
-                <Clock color={Colors.error} size={20} />
+            <View style={themedStyles.gridItem}>
+              <View style={[themedStyles.gridIcon, { backgroundColor: colors.error + '18' }]}>
+                <Clock color={colors.error} size={20} />
               </View>
-              <Text style={styles.gridValue}>
+              <Text style={themedStyles.gridValue}>
                 {(progress.wrongAnswers || []).length}
               </Text>
-              <Text style={styles.gridLabel}>Yanlış Cevap</Text>
+              <Text style={themedStyles.gridLabel}>Yanlış Cevap</Text>
             </View>
           </Animated.View>
 
-          <Text style={styles.sectionTitle}>Konu Bazlı Performans</Text>
+          <Text style={themedStyles.sectionTitle}>Konu Bazlı Performans</Text>
 
           {topics.map((topic) => {
             const quizzes = progress.completedQuizzes.filter((q) => q.topicId === topic.id);
@@ -166,14 +215,14 @@ export default function ProgressScreen() {
             const acc = totalQ > 0 ? Math.round((totalC / totalQ) * 100) : 0;
 
             return (
-              <View key={topic.id} style={styles.topicRow}>
-                <View style={[styles.topicDot, { backgroundColor: topic.color }]} />
-                <View style={styles.topicRowInfo}>
-                  <Text style={styles.topicRowTitle}>{topic.title}</Text>
-                  <View style={styles.topicBarBg}>
+              <View key={topic.id} style={themedStyles.topicRow}>
+                <View style={[themedStyles.topicDot, { backgroundColor: topic.color }]} />
+                <View style={themedStyles.topicRowInfo}>
+                  <Text style={themedStyles.topicRowTitle}>{topic.title}</Text>
+                  <View style={themedStyles.topicBarBg}>
                     <View
                       style={[
-                        styles.topicBarFill,
+                        themedStyles.topicBarFill,
                         { width: `${acc}%`, backgroundColor: topic.color },
                       ]}
                     />
@@ -181,16 +230,16 @@ export default function ProgressScreen() {
                 </View>
                 <Text
                   style={[
-                    styles.topicRowAcc,
+                    themedStyles.topicRowAcc,
                     {
                       color:
                         quizzes.length === 0
-                          ? Colors.textLight
+                          ? colors.textLight
                           : acc >= 70
-                          ? Colors.success
+                          ? colors.success
                           : acc >= 50
-                          ? Colors.warning
-                          : Colors.error,
+                          ? colors.warning
+                          : colors.error,
                     },
                   ]}
                 >
@@ -200,63 +249,103 @@ export default function ProgressScreen() {
             );
           })}
 
-          {progress.completedQuizzes.length > 0 && (
-            <>
-              <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Son Testler</Text>
-              {progress.completedQuizzes.slice(0, 8).map((quiz, index) => {
-                const topic = topics.find((t) => t.id === quiz.topicId);
-                const acc = Math.round((quiz.correctAnswers / quiz.totalQuestions) * 100);
-                return (
-                  <View key={quiz.id + index} style={styles.recentQuiz}>
-                    <View style={[styles.recentDot, { backgroundColor: topic?.color || Colors.textLight }]} />
-                    <View style={styles.recentInfo}>
-                      <Text style={styles.recentQuizTitle}>{topic?.title ?? 'Bilinmeyen'}</Text>
-                      <Text style={styles.recentQuizDate}>
-                        {new Date(quiz.date).toLocaleDateString('tr-TR')}
-                      </Text>
-                    </View>
-                    <View style={styles.recentQuizScore}>
-                      <Text
-                        style={[
-                          styles.recentQuizAcc,
-                          {
-                            color: acc >= 70 ? Colors.success : acc >= 50 ? Colors.warning : Colors.error,
-                          },
-                        ]}
-                      >
-                        %{acc}
-                      </Text>
-                      <Text style={styles.recentQuizDetail}>
-                        {quiz.correctAnswers}/{quiz.totalQuestions}
-                      </Text>
-                    </View>
-                  </View>
-                );
-              })}
-            </>
-          )}
-
-          {progress.completedQuizzes.length === 0 && (
-            <View style={styles.emptyState}>
-              <Trophy color={Colors.textLight} size={48} />
-              <Text style={styles.emptyTitle}>Henüz test çözmediniz</Text>
-              <Text style={styles.emptySubtitle}>
-                Konuları inceleyip test çözerek ilerlemenizi takip edin
-              </Text>
+          <Text style={themedStyles.sectionTitle}>Bildirim Ayarları</Text>
+          <View style={themedStyles.settingsCard}>
+            <View style={themedStyles.settingRow}>
+              <View style={themedStyles.settingInfo}>
+                <Clock color={colors.primary} size={20} />
+                <View>
+                  <Text style={themedStyles.settingTitle}>Günlük Hatırlatıcı</Text>
+                  <Text style={themedStyles.settingSub}>Her gün çalışma vaktini hatırlat</Text>
+                </View>
+              </View>
+              <TouchableOpacity 
+                style={[themedStyles.toggle, progress.notificationsEnabled ? themedStyles.toggleOn : themedStyles.toggleOff]}
+                onPress={() => toggleNotifications(!progress.notificationsEnabled)}
+              >
+                <View style={[themedStyles.toggleCircle, progress.notificationsEnabled ? themedStyles.toggleCircleOn : themedStyles.toggleCircleOff]} />
+              </TouchableOpacity>
             </View>
-          )}
+            
+            {progress.notificationsEnabled && (
+              <View style={[themedStyles.settingRow, { marginTop: 16, borderTopWidth: 1, borderTopColor: colors.borderLight, paddingTop: 16 }]}>
+                <View style={themedStyles.settingInfo}>
+                  <Calendar color={colors.primary} size={20} />
+                  <View>
+                    <Text style={themedStyles.settingTitle}>Hatırlatma Saati</Text>
+                    <Text style={themedStyles.settingSub}>Her gün saat {progress.reminderTime?.hour}:00'da</Text>
+                  </View>
+                </View>
+                <TouchableOpacity 
+                  style={themedStyles.timeBtn}
+                  onPress={() => setIsTimePickerVisible(true)}
+                >
+                  <Text style={themedStyles.timeBtnText}>Değiştir</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
 
-          <View style={styles.bottomSpacer} />
+          <Modal
+            visible={isTimePickerVisible}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setIsTimePickerVisible(false)}
+          >
+            <Pressable 
+              style={themedStyles.modalOverlay} 
+              onPress={() => setIsTimePickerVisible(false)}
+            >
+              <View style={themedStyles.pickerContainer}>
+                <View style={themedStyles.pickerHeader}>
+                  <Text style={themedStyles.pickerTitle}>Saat Seçin</Text>
+                  <TouchableOpacity 
+                    onPress={() => setIsTimePickerVisible(false)}
+                    hitSlop={10}
+                  >
+                    <Text style={themedStyles.pickerClose}>Kapat</Text>
+                  </TouchableOpacity>
+                </View>
+                <ScrollView style={themedStyles.hourList} showsVerticalScrollIndicator={false}>
+                  {Array.from({ length: 24 }).map((_, h) => (
+                    <TouchableOpacity
+                      key={h}
+                      style={[
+                        themedStyles.hourItem,
+                        progress.reminderTime?.hour === h && themedStyles.hourItemActive
+                      ]}
+                      onPress={() => {
+                        setReminderTime(h, 0);
+                        setIsTimePickerVisible(false);
+                      }}
+                    >
+                      <Text style={[
+                        themedStyles.hourText,
+                        progress.reminderTime?.hour === h && themedStyles.hourTextActive
+                      ]}>
+                        {h < 10 ? `0${h}` : h}:00
+                      </Text>
+                      {progress.reminderTime?.hour === h && (
+                        <CheckCircle color={colors.primary} size={18} />
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            </Pressable>
+          </Modal>
+
+          <View style={themedStyles.bottomSpacer} />
         </ScrollView>
       </SafeAreaView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   safeArea: {
     flex: 1,
@@ -268,17 +357,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800' as const,
-    color: Colors.primary,
+    color: colors.primary,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 15,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 2,
     marginBottom: 20,
   },
   mainCard: {
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 20,
     padding: 24,
     marginBottom: 16,
@@ -292,12 +381,12 @@ const styles = StyleSheet.create({
   accuracyTitle: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.accentLight,
+    color: colors.accentLight,
   },
   accuracyValue: {
     fontSize: 48,
     fontWeight: '800' as const,
-    color: Colors.white,
+    color: colors.white,
     marginBottom: 12,
   },
   progressBarBg: {
@@ -309,7 +398,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: Colors.accent,
+    backgroundColor: colors.accent,
     borderRadius: 4,
   },
   accuracyHint: {
@@ -318,11 +407,11 @@ const styles = StyleSheet.create({
   },
   streakSection: {
     flexDirection: 'row',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 24,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -336,33 +425,33 @@ const styles = StyleSheet.create({
   streakItemValue: {
     fontSize: 20,
     fontWeight: '800' as const,
-    color: Colors.text,
+    color: colors.text,
   },
   streakItemLabel: {
     fontSize: 10,
-    color: Colors.textLight,
+    color: colors.textLight,
     fontWeight: '500' as const,
   },
   streakDivider: {
     width: 1,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: colors.borderLight,
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: '700' as const,
-    color: Colors.primary,
+    color: colors.primary,
     marginBottom: 14,
   },
   weeklyChart: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     paddingTop: 20,
     marginBottom: 24,
     height: 160,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -376,7 +465,7 @@ const styles = StyleSheet.create({
   weeklyBarOuter: {
     flex: 1,
     width: 20,
-    backgroundColor: Colors.borderLight + '50',
+    backgroundColor: colors.borderLight + '50',
     borderRadius: 6,
     overflow: 'hidden',
     justifyContent: 'flex-end',
@@ -389,12 +478,12 @@ const styles = StyleSheet.create({
   },
   weeklyLabel: {
     fontSize: 10,
-    color: Colors.textLight,
+    color: colors.textLight,
     fontWeight: '500' as const,
   },
   weeklyCount: {
     fontSize: 9,
-    color: Colors.textLight,
+    color: colors.textLight,
     fontWeight: '600' as const,
     position: 'absolute',
     top: 0,
@@ -408,7 +497,7 @@ const styles = StyleSheet.create({
   gridItem: {
     width: '48%' as unknown as number,
     flexBasis: '48%',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
     alignItems: 'center',
@@ -424,18 +513,18 @@ const styles = StyleSheet.create({
   gridValue: {
     fontSize: 22,
     fontWeight: '800' as const,
-    color: Colors.text,
+    color: colors.text,
   },
   gridLabel: {
     fontSize: 11,
-    color: Colors.textLight,
+    color: colors.textLight,
     marginTop: 2,
     fontWeight: '500' as const,
   },
   topicRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
@@ -453,12 +542,12 @@ const styles = StyleSheet.create({
   topicRowTitle: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: colors.text,
     marginBottom: 6,
   },
   topicBarBg: {
     height: 4,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: colors.borderLight,
     borderRadius: 2,
     overflow: 'hidden',
   },
@@ -473,61 +562,163 @@ const styles = StyleSheet.create({
     minWidth: 36,
     textAlign: 'right' as const,
   },
-  recentQuiz: {
+  settingsCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 16,
+    shadowColor: colors.cardShadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 8,
+    justifyContent: 'space-between',
   },
-  recentDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 12,
-  },
-  recentInfo: {
-    flex: 1,
-  },
-  recentQuizTitle: {
-    fontSize: 13,
-    fontWeight: '600' as const,
-    color: Colors.text,
-  },
-  recentQuizDate: {
-    fontSize: 11,
-    color: Colors.textLight,
-    marginTop: 2,
-  },
-  recentQuizScore: {
-    alignItems: 'flex-end',
-  },
-  recentQuizAcc: {
-    fontSize: 17,
-    fontWeight: '800' as const,
-  },
-  recentQuizDetail: {
-    fontSize: 11,
-    color: Colors.textLight,
-  },
-  emptyState: {
+  settingInfo: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 40,
+    gap: 12,
   },
-  emptyTitle: {
-    fontSize: 17,
+  settingTitle: {
+    fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.text,
-    marginTop: 16,
+    color: colors.text,
   },
-  emptySubtitle: {
-    fontSize: 13,
-    color: Colors.textSecondary,
-    marginTop: 4,
-    textAlign: 'center' as const,
+  settingSub: {
+    fontSize: 12,
+    color: colors.textLight,
+    marginTop: 1,
+  },
+  toggle: {
+    width: 44,
+    height: 24,
+    borderRadius: 12,
+    padding: 2,
+    justifyContent: 'center',
+  },
+  toggleOn: {
+    backgroundColor: colors.primary,
+  },
+  toggleOff: {
+    backgroundColor: colors.border,
+  },
+  toggleCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: colors.white,
+  },
+  toggleCircleOn: {
+    alignSelf: 'flex-end',
+  },
+  toggleCircleOff: {
+    alignSelf: 'flex-start',
+  },
+  timeBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: colors.borderLight,
+  },
+  timeBtnText: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    color: colors.primary,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  pickerContainer: {
+    width: '100%',
+    maxHeight: '60%',
+    backgroundColor: colors.surface,
+    borderRadius: 24,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  pickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  pickerTitle: {
+    fontSize: 18,
+    fontWeight: '800' as const,
+    color: colors.primary,
+  },
+  pickerClose: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: colors.textSecondary,
+  },
+  hourList: {
+    flexGrow: 0,
+  },
+  hourItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 4,
+  },
+  hourItemActive: {
+    backgroundColor: colors.primary + '08',
+  },
+  hourText: {
+    fontSize: 16,
+    fontWeight: '500' as const,
+    color: colors.text,
+  },
+  hourTextActive: {
+    fontWeight: '700' as const,
+    color: colors.primary,
+  },
+  themeOptions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 12,
+  },
+  themeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  themeBtnActive: {
+    backgroundColor: colors.primary + '15',
+    borderColor: colors.primary,
+  },
+  themeBtnText: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    color: colors.textSecondary,
+  },
+  themeBtnTextActive: {
+    color: colors.primary,
   },
   bottomSpacer: {
-    height: 20,
+    height: 40,
   },
 });

@@ -2,18 +2,20 @@ import { Tabs } from "expo-router";
 import { BookOpen, Trophy, Bookmark, Brain } from "lucide-react-native";
 import React from "react";
 import { Platform } from "react-native";
-import Colors from "@/constants/colors";
+import { useTheme } from "@/providers/ThemeProvider";
 
 export default function TabLayout() {
+  const { colors } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.textLight,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textLight,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: Colors.tabBar,
-          borderTopColor: Colors.tabBarBorder,
+          backgroundColor: colors.tabBar,
+          borderTopColor: colors.tabBarBorder,
           ...(Platform.OS === "web" ? { height: 60 } : {}),
         },
         tabBarLabelStyle: {

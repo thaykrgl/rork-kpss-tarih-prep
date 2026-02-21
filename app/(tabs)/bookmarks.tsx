@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,14 @@ import {
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Bookmark, ChevronRight, BookOpen } from 'lucide-react-native';
-import Colors from '@/constants/colors';
 import { useStudy } from '@/providers/StudyProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 import { topics } from '@/mocks/topics';
 
 export default function BookmarksScreen() {
   const router = useRouter();
   const { progress } = useStudy();
+  const { colors } = useTheme();
 
   const bookmarkedTopicsList = topics.filter((t) =>
     progress.bookmarkedTopics.includes(t.id)
@@ -34,21 +35,23 @@ export default function BookmarksScreen() {
   const hasBookmarks =
     bookmarkedTopicsList.length > 0 || bookmarkedSubtopicsList.length > 0;
 
+  const themedStyles = useMemo(() => styles(colors), [colors]);
+
   return (
-    <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={styles.safeArea}>
+    <View style={themedStyles.container}>
+      <SafeAreaView edges={['top']} style={themedStyles.safeArea}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={themedStyles.scrollContent}
         >
-          <Text style={styles.title}>Kaydedilenler</Text>
-          <Text style={styles.subtitle}>Favori konularınız</Text>
+          <Text style={themedStyles.title}>Kaydedilenler</Text>
+          <Text style={themedStyles.subtitle}>Favori konularınız</Text>
 
           {!hasBookmarks && (
-            <View style={styles.emptyState}>
-              <Bookmark color={Colors.textLight} size={48} />
-              <Text style={styles.emptyTitle}>Henüz kayıt yok</Text>
-              <Text style={styles.emptySubtitle}>
+            <View style={themedStyles.emptyState}>
+              <Bookmark color={colors.textLight} size={48} />
+              <Text style={themedStyles.emptyTitle}>Henüz kayıt yok</Text>
+              <Text style={themedStyles.emptySubtitle}>
                 Konuları incelerken yer imi ekleyerek burada görüntüleyin
               </Text>
             </View>
@@ -56,30 +59,30 @@ export default function BookmarksScreen() {
 
           {bookmarkedTopicsList.length > 0 && (
             <>
-              <View style={styles.sectionHeader}>
-                <BookOpen color={Colors.primary} size={16} />
-                <Text style={styles.sectionTitle}>Konular</Text>
+              <View style={themedStyles.sectionHeader}>
+                <BookOpen color={colors.primary} size={16} />
+                <Text style={themedStyles.sectionTitle}>Konular</Text>
               </View>
               {bookmarkedTopicsList.map((topic) => (
                 <TouchableOpacity
                   key={topic.id}
-                  style={styles.card}
+                  style={themedStyles.card}
                   activeOpacity={0.7}
                   onPress={() => router.push({ pathname: '/topic/[id]' as any, params: { id: topic.id } })}
                 >
                   <View
                     style={[
-                      styles.cardDot,
+                      themedStyles.cardDot,
                       { backgroundColor: topic.color },
                     ]}
                   />
-                  <View style={styles.cardInfo}>
-                    <Text style={styles.cardTitle}>{topic.title}</Text>
-                    <Text style={styles.cardSub} numberOfLines={1}>
+                  <View style={themedStyles.cardInfo}>
+                    <Text style={themedStyles.cardTitle}>{topic.title}</Text>
+                    <Text style={themedStyles.cardSub} numberOfLines={1}>
                       {topic.description}
                     </Text>
                   </View>
-                  <ChevronRight color={Colors.textLight} size={18} />
+                  <ChevronRight color={colors.textLight} size={18} />
                 </TouchableOpacity>
               ))}
             </>
@@ -89,17 +92,17 @@ export default function BookmarksScreen() {
             <>
               <View
                 style={[
-                  styles.sectionHeader,
+                  themedStyles.sectionHeader,
                   bookmarkedTopicsList.length > 0 && { marginTop: 20 },
                 ]}
               >
-                <Bookmark color={Colors.primary} size={16} />
-                <Text style={styles.sectionTitle}>Alt Konular</Text>
+                <Bookmark color={colors.primary} size={16} />
+                <Text style={themedStyles.sectionTitle}>Alt Konular</Text>
               </View>
               {bookmarkedSubtopicsList.map((st) => (
                 <TouchableOpacity
                   key={st.id}
-                  style={styles.card}
+                  style={themedStyles.card}
                   activeOpacity={0.7}
                   onPress={() =>
                     router.push({ pathname: '/subtopic/[id]' as any, params: { id: st.id } })
@@ -107,31 +110,31 @@ export default function BookmarksScreen() {
                 >
                   <View
                     style={[
-                      styles.cardDot,
+                      themedStyles.cardDot,
                       { backgroundColor: st.topicColor },
                     ]}
                   />
-                  <View style={styles.cardInfo}>
-                    <Text style={styles.cardTitle}>{st.title}</Text>
-                    <Text style={styles.cardSub}>{st.topicTitle}</Text>
+                  <View style={themedStyles.cardInfo}>
+                    <Text style={themedStyles.cardTitle}>{st.title}</Text>
+                    <Text style={themedStyles.cardSub}>{st.topicTitle}</Text>
                   </View>
-                  <ChevronRight color={Colors.textLight} size={18} />
+                  <ChevronRight color={colors.textLight} size={18} />
                 </TouchableOpacity>
               ))}
             </>
           )}
 
-          <View style={styles.bottomSpacer} />
+          <View style={themedStyles.bottomSpacer} />
         </ScrollView>
       </SafeAreaView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   safeArea: {
     flex: 1,
@@ -143,12 +146,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800' as const,
-    color: Colors.primary,
+    color: colors.primary,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 15,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 2,
     marginBottom: 20,
   },
@@ -161,16 +164,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.primary,
+    color: colors.primary,
   },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 6,
@@ -188,11 +191,11 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: colors.text,
   },
   cardSub: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 2,
   },
   emptyState: {
@@ -202,12 +205,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 17,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: colors.text,
     marginTop: 16,
   },
   emptySubtitle: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 4,
     textAlign: 'center' as const,
     maxWidth: 240,
