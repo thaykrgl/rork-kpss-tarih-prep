@@ -41,7 +41,7 @@ export default function StudyScreen() {
 
   const wrongCount = (progress.wrongAnswers || []).length;
 
-  const topicFlashcardCounts = useMemo(() => {
+  const flashcardStats = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const fc of flashcards) {
       counts[fc.topicId] = (counts[fc.topicId] || 0) + 1;
@@ -144,7 +144,7 @@ export default function StudyScreen() {
           <Text style={themedStyles.sectionSub}>Aktif hatırlama yöntemiyle çalış</Text>
 
           {topics.map((topic) => {
-            const cardCount = topicFlashcardCounts[topic.id] || 0;
+            const cardCount = flashcardStats[topic.id] || 0;
             if (cardCount === 0) return null;
             const isLocked = topic.isPremium && !isPremium;
 
@@ -321,6 +321,20 @@ const styles = (colors: any) => StyleSheet.create({
   flashcardCount: {
     fontSize: 11,
     color: colors.textLight,
+  },
+  flashcardMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     marginTop: 2,
+  },
+  dueBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  dueText: {
+    fontSize: 10,
+    fontWeight: '700' as const,
   },
 });

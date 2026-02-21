@@ -7,7 +7,7 @@ import {
   Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Trophy, Target, CheckCircle, TrendingUp, Flame, Calendar, Clock } from 'lucide-react-native';
+import { Trophy, Target, CheckCircle, TrendingUp, Flame, Calendar, Clock, Layers } from 'lucide-react-native';
 import { useStudy } from '@/providers/StudyProvider';
 import { useTheme } from '@/providers/ThemeProvider';
 import { topics } from '@/mocks/topics';
@@ -62,6 +62,16 @@ export default function ProgressScreen() {
   }, [progress.dailyStudy]);
 
   const maxWeekly = Math.max(...weeklyData.map((d) => d.count), 1);
+  
+  const flashcardStats = useMemo(() => {
+    const totalSeen = Object.keys(progress.flashcardProgress || {}).length;
+    // Bir kere bile "Biliyorum" dendiyse (repetition >= 1) öğrenilmiş sayılsın
+    const learned = Object.values(progress.flashcardProgress || {}).filter(p => p.repetition >= 1).length;
+    const accuracy = totalSeen > 0 
+      ? Math.round((Object.values(progress.flashcardProgress || {}).filter(p => p.lastScore === 5).length / totalSeen) * 100)
+      : 0;
+    return { totalSeen, learned, accuracy };
+  }, [progress.flashcardProgress]);
 
   return (
     <View style={themedStyles.container}>
@@ -82,8 +92,8 @@ export default function ProgressScreen() {
             <View style={themedStyles.progressBarBg}>
               <Animated.View style={[themedStyles.progressBarFill, { width: progressWidth }]} />
             </View>
-            <Text style={themedStyles.accuracyHint}>
-              {progress.totalQuestionsAnswered} sorudan {progress.totalCorrectAnswers} doğru
+             <Text style={themedStyles.accuracyHint}>
+              {progress.totalQuestionsAnswered} sorudan {progress.totalCorrectAnswers} doğru, {flashcardStats.totalSeen} karttan {flashcardStats.learned} öğrenildi
             </Text>
           </Animated.View>
 
@@ -138,14 +148,21 @@ export default function ProgressScreen() {
                 <Target color={colors.accent} size={20} />
               </View>
               <Text style={themedStyles.gridValue}>{progress.completedQuizzes.length}</Text>
-              <Text style={themedStyles.gridLabel}>Tamamlanan Test</Text>
+              <Text style={themedStyles.gridLabel}>Bilgi Testi</Text>
+            </View>
+            <View style={themedStyles.gridItem}>
+              <View style={[themedStyles.gridIcon, { backgroundColor: colors.primary + '18' }]}>
+                <Layers color={colors.primary} size={20} />
+              </View>
+              <Text style={themedStyles.gridValue}>{flashcardStats.totalSeen}</Text>
+              <Text style={themedStyles.gridLabel}>Kart Çalışıldı</Text>
             </View>
             <View style={themedStyles.gridItem}>
               <View style={[themedStyles.gridIcon, { backgroundColor: colors.success + '18' }]}>
                 <CheckCircle color={colors.success} size={20} />
               </View>
-              <Text style={themedStyles.gridValue}>{progress.totalCorrectAnswers}</Text>
-              <Text style={themedStyles.gridLabel}>Doğru Cevap</Text>
+              <Text style={themedStyles.gridValue}>{flashcardStats.learned}</Text>
+              <Text style={themedStyles.gridLabel}>Öğrenilen Kart</Text>
             </View>
             <View style={themedStyles.gridItem}>
               <View style={[themedStyles.gridIcon, { backgroundColor: '#2E86AB18' }]}>
@@ -153,15 +170,6 @@ export default function ProgressScreen() {
               </View>
               <Text style={themedStyles.gridValue}>{progress.totalQuestionsAnswered}</Text>
               <Text style={themedStyles.gridLabel}>Toplam Soru</Text>
-            </View>
-            <View style={themedStyles.gridItem}>
-              <View style={[themedStyles.gridIcon, { backgroundColor: colors.error + '18' }]}>
-                <Clock size={20} color={colors.error} />
-              </View>
-              <Text style={themedStyles.gridValue}>
-                {(progress.wrongAnswers || []).length}
-              </Text>
-              <Text style={themedStyles.gridLabel}>Yanlış Cevap</Text>
             </View>
           </Animated.View>
 

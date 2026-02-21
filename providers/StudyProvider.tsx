@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import createContextHook from '@nkzw/create-context-hook';
-import { QuizResult, UserProgress, WrongAnswer, StudyNote, DailyStudy } from '@/types';
+import { QuizResult, UserProgress, WrongAnswer, StudyNote, DailyStudy, FlashcardScore, FlashcardProgress } from '@/types';
 
 const STORAGE_KEY = 'kpss_user_progress';
 
@@ -22,6 +22,7 @@ const defaultProgress: UserProgress = {
   notificationsEnabled: true,
   reminderTime: { hour: 20, minute: 0 },
   theme: 'system',
+  flashcardProgress: {},
 };
 
 function getTodayStr(): string {
@@ -72,6 +73,7 @@ export const [StudyProvider, useStudy] = createContextHook(() => {
       if (!data.wrongAnswers) data.wrongAnswers = [];
       if (!data.notes) data.notes = [];
       if (!data.dailyStudy) data.dailyStudy = [];
+      if (!data.flashcardProgress) data.flashcardProgress = {};
       setProgress(data);
     }
   }, [progressQuery.data]);
@@ -265,6 +267,77 @@ export const [StudyProvider, useStudy] = createContextHook(() => {
     save(defaultProgress);
   }, [save]);
 
+  const updateFlashcardProgress = useCallback((cardId: string, score: FlashcardScore) => {
+    setProgress((prev) => {
+      const progressMap = prev.flashcardProgress || {};
+      const cardProgress = progressMap[cardId] || {
+        cardId,
+        nextReviewDate: new Date().toISOString(),
+        interval: 0,
+        easeFactor: 2.5,
+        repetition: 0,
+        lastScore: 5 as FlashcardScore,
+      };
+
+      let { interval, easeFactor, repetition } = cardProgress;
+
+      if (score === 5) { // Biliyorum
+        if (repetition === 0) {
+          interval = 1;
+        } else if (repetition === 1) {
+          interval = 4;
+        } else {
+          interval = Math.round(interval * easeFactor);
+        }
+        repetition++;
+        easeFactor = Math.min(3.5, easeFactor + 0.1);
+      } else if (score === 3) { // Şüpheliyim
+        if (repetition > 0) {
+          interval = Math.max(1, Math.round(interval * 1.2));
+        } else {
+          interval = 1;
+        }
+        // Don't reset repetition but don't increment it significantly
+        easeFactor = Math.max(1.3, easeFactor - 0.15);
+      } else { // Bilmiyorum (1)
+        repetition = 0;
+        interval = 0; // Show again very soon/today
+        easeFactor = Math.max(1.3, easeFactor - 0.2);
+      }
+
+      const nextReview = new Date();
+      nextReview.setDate(nextReview.getDate() + interval);
+      // Set to beginning of day for easier comparison
+      nextReview.setHours(0, 0, 0, 0);
+
+      const updatedProgressMap = {
+        ...progressMap,
+        [cardId]: {
+          cardId,
+          nextReviewDate: nextReview.toISOString(),
+          interval,
+          easeFactor,
+          repetition,
+          lastScore: score,
+        },
+      };
+
+      const updated = {
+        ...prev,
+        flashcardProgress: updatedProgressMap,
+      };
+      saveMutation.mutate(updated);
+      return updated;
+    });
+    // Günlük aktivite ve seri (streak) takibi için kart çalışmasını da sayalım
+    updateDailyStudy(1, score === 5 ? 1 : 0, 0);
+  }, [saveMutation, updateDailyStudy]);
+
+  const getCardProgress = useCallback(
+    (cardId: string) => (progress.flashcardProgress || {})[cardId] || null,
+    [progress.flashcardProgress]
+  );
+
   const isTopicBookmarked = useCallback(
     (topicId: string) => progress.bookmarkedTopics.includes(topicId),
     [progress.bookmarkedTopics]
@@ -292,12 +365,18 @@ export const [StudyProvider, useStudy] = createContextHook(() => {
     return (progress.dailyStudy || []).find((d) => d.date === today) ?? null;
   }, [progress.dailyStudy]);
 
-  const overallAccuracy =
-    progress.totalQuestionsAnswered > 0
-      ? Math.round(
-          (progress.totalCorrectAnswers / progress.totalQuestionsAnswered) * 100
-        )
-      : 0;
+  const flashcardStats = useMemo(() => {
+    const totalSeen = Object.keys(progress.flashcardProgress || {}).length;
+    const learned = Object.values(progress.flashcardProgress || {}).filter(p => p.repetition >= 1).length;
+    return { totalSeen, learned };
+  }, [progress.flashcardProgress]);
+
+  const overallAccuracy = useMemo(() => {
+    const totalItems = progress.totalQuestionsAnswered + flashcardStats.totalSeen;
+    const successfulItems = progress.totalCorrectAnswers + flashcardStats.learned;
+    
+    return totalItems > 0 ? Math.round((successfulItems / totalItems) * 100) : 0;
+  }, [progress.totalQuestionsAnswered, progress.totalCorrectAnswers, flashcardStats]);
 
   return {
     progress,
@@ -321,6 +400,8 @@ export const [StudyProvider, useStudy] = createContextHook(() => {
     setReminderTime,
     setTheme,
     getTodayStudy,
+    updateFlashcardProgress,
+    getCardProgress,
     resetProgress,
   };
 });

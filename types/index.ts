@@ -79,6 +79,18 @@ export interface UserProgress {
   notificationsEnabled?: boolean;
   reminderTime?: { hour: number; minute: number };
   theme?: 'light' | 'dark' | 'system';
+  flashcardProgress?: Record<string, FlashcardProgress>;
+}
+
+export type FlashcardScore = 1 | 3 | 5; // 1: Bilmiyorum, 3: Şüpheliyim, 5: Biliyorum
+
+export interface FlashcardProgress {
+  cardId: string;
+  nextReviewDate: string;
+  interval: number; // in days
+  easeFactor: number;
+  repetition: number;
+  lastScore: FlashcardScore;
 }
 
 export interface Flashcard {
