@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -13,10 +13,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { X, Check, XCircle, ChevronRight, RotateCcw, Trophy, Clock } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import Colors from '@/constants/colors';
 import { topics } from '@/mocks/topics';
 import { questions as allQuestions } from '@/mocks/questions';
 import { useStudy } from '@/providers/StudyProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 import { QuizResult, WrongAnswer } from '@/types';
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -31,7 +31,10 @@ function shuffleArray<T>(array: T[]): T[] {
 export default function QuizScreen() {
   const { topicId } = useLocalSearchParams<{ topicId: string }>();
   const router = useRouter();
+  const { colors } = useTheme();
   const { addQuizResult } = useStudy();
+
+  const themedStyles = useMemo(() => styles(colors), [colors]);
 
   const topic = topics.find((t) => t.id === topicId);
   const topicQuestions = allQuestions.filter((q) => q.topicId === topicId);
@@ -120,51 +123,49 @@ export default function QuizScreen() {
       setShowResult(false);
       setCurrentIndex((prev) => prev + 1);
     } else {
-      const finalCorrect = correctCount + (selectedAnswer === currentQuestion.correctAnswer ? 1 : 0);
-      const timeSpent = Math.round((Date.now() - startTime) / 1000);
-
+      const finalCorrect = correctCount;
       const result: QuizResult = {
         id: `quiz-${Date.now()}`,
         topicId: topicId ?? '',
         date: new Date().toISOString(),
         totalQuestions: questions.length,
         correctAnswers: finalCorrect,
-        timeSpent,
+        timeSpent: elapsedSeconds,
         wrongAnswerIds: wrongAnswersList.map((w) => w.questionId),
       };
 
       addQuizResult(result, wrongAnswersList);
       setQuizFinished(true);
     }
-  }, [currentIndex, questions.length, correctCount, selectedAnswer, currentQuestion, topicId, startTime, addQuizResult, wrongAnswersList]);
+  }, [currentIndex, questions.length, correctCount, topicId, elapsedSeconds, addQuizResult, wrongAnswersList]);
 
   const getOptionStyle = useCallback(
     (index: number) => {
-      if (!showResult) return styles.optionDefault;
-      if (index === currentQuestion.correctAnswer) return styles.optionCorrect;
-      if (index === selectedAnswer && index !== currentQuestion.correctAnswer) return styles.optionWrong;
-      return styles.optionDisabled;
+      if (!showResult) return themedStyles.optionDefault;
+      if (index === currentQuestion.correctAnswer) return themedStyles.optionCorrect;
+      if (index === selectedAnswer && index !== currentQuestion.correctAnswer) return themedStyles.optionWrong;
+      return themedStyles.optionDisabled;
     },
-    [showResult, currentQuestion, selectedAnswer]
+    [showResult, currentQuestion, selectedAnswer, themedStyles]
   );
 
   const getOptionTextStyle = useCallback(
     (index: number) => {
-      if (!showResult) return styles.optionTextDefault;
-      if (index === currentQuestion.correctAnswer) return styles.optionTextCorrect;
-      if (index === selectedAnswer && index !== currentQuestion.correctAnswer) return styles.optionTextWrong;
-      return styles.optionTextDisabled;
+      if (!showResult) return themedStyles.optionTextDefault;
+      if (index === currentQuestion.correctAnswer) return themedStyles.optionTextCorrect;
+      if (index === selectedAnswer && index !== currentQuestion.correctAnswer) return themedStyles.optionTextWrong;
+      return themedStyles.optionTextDisabled;
     },
-    [showResult, currentQuestion, selectedAnswer]
+    [showResult, currentQuestion, selectedAnswer, themedStyles]
   );
 
   if (!topic || questions.length === 0) {
     return (
-      <View style={styles.container}>
-        <SafeAreaView style={styles.safeArea}>
-          <Text style={styles.errorText}>Bu konu için soru bulunamadı</Text>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Text style={styles.backBtnText}>Geri Dön</Text>
+      <View style={themedStyles.container}>
+        <SafeAreaView style={themedStyles.safeArea}>
+          <Text style={themedStyles.errorText}>Bu konu için soru bulunamadı</Text>
+          <TouchableOpacity style={themedStyles.backBtn} onPress={() => router.back()}>
+            <Text style={themedStyles.backBtnText}>Geri Dön</Text>
           </TouchableOpacity>
         </SafeAreaView>
       </View>
@@ -172,84 +173,82 @@ export default function QuizScreen() {
   }
 
   if (quizFinished) {
-    const finalCorrect = correctCount;
-    const accuracy = Math.round((finalCorrect / questions.length) * 100);
-    const timeSpent = Math.round((Date.now() - startTime) / 1000);
-    const minutes = Math.floor(timeSpent / 60);
-    const seconds = timeSpent % 60;
+    const accuracy = Math.round((correctCount / questions.length) * 100);
+    const minutes = Math.floor(elapsedSeconds / 60);
+    const seconds = elapsedSeconds % 60;
 
     return (
-      <View style={styles.container}>
-        <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
+      <View style={themedStyles.container}>
+        <SafeAreaView edges={['top', 'bottom']} style={themedStyles.safeArea}>
           <ScrollView
-            contentContainerStyle={styles.resultContainer}
+            contentContainerStyle={themedStyles.resultContainer}
             showsVerticalScrollIndicator={false}
           >
             <View
               style={[
-                styles.resultCircle,
+                themedStyles.resultCircle,
                 {
                   backgroundColor:
-                    accuracy >= 70 ? Colors.successLight : accuracy >= 50 ? Colors.warningLight : Colors.errorLight,
+                    accuracy >= 70 ? colors.success + '15' : accuracy >= 50 ? colors.warning + '15' : colors.error + '15',
                 },
               ]}
             >
               <Trophy
-                color={accuracy >= 70 ? Colors.success : accuracy >= 50 ? Colors.warning : Colors.error}
+                color={accuracy >= 70 ? colors.success : accuracy >= 50 ? colors.warning : colors.error}
                 size={48}
               />
             </View>
 
-            <Text style={styles.resultTitle}>Test Tamamlandı!</Text>
-            <Text style={styles.resultTopicName}>{topic.title}</Text>
+            <Text style={themedStyles.resultTitle}>Test Tamamlandı!</Text>
+            <Text style={themedStyles.resultTopicName}>{topic.title}</Text>
 
             <Text
               style={[
-                styles.resultAccuracy,
+                themedStyles.resultAccuracy,
                 {
-                  color: accuracy >= 70 ? Colors.success : accuracy >= 50 ? Colors.warning : Colors.error,
+                  color: accuracy >= 70 ? colors.success : accuracy >= 50 ? colors.warning : colors.error,
                 },
               ]}
             >
               %{accuracy}
             </Text>
 
-            <View style={styles.resultStats}>
-              <View style={styles.resultStat}>
-                <Text style={[styles.resultStatValue, { color: Colors.success }]}>{finalCorrect}</Text>
-                <Text style={styles.resultStatLabel}>Doğru</Text>
+            <View style={themedStyles.resultStats}>
+              <View style={themedStyles.resultStat}>
+                <Text style={[themedStyles.resultStatValue, { color: colors.success }]}>{correctCount}</Text>
+                <Text style={themedStyles.resultStatLabel}>Doğru</Text>
               </View>
-              <View style={styles.resultStatDivider} />
-              <View style={styles.resultStat}>
-                <Text style={[styles.resultStatValue, { color: Colors.error }]}>
-                  {questions.length - finalCorrect}
+              <View style={themedStyles.resultStatDivider} />
+              <View style={themedStyles.resultStat}>
+                <Text style={[themedStyles.resultStatValue, { color: colors.error }]}>
+                  {questions.length - correctCount}
                 </Text>
-                <Text style={styles.resultStatLabel}>Yanlış</Text>
+                <Text style={themedStyles.resultStatLabel}>Yanlış</Text>
               </View>
-              <View style={styles.resultStatDivider} />
-              <View style={styles.resultStat}>
-                <Text style={styles.resultStatValue}>
+              <View style={themedStyles.resultStatDivider} />
+              <View style={themedStyles.resultStat}>
+                <Text style={themedStyles.resultStatValue}>
                   {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
                 </Text>
-                <Text style={styles.resultStatLabel}>Süre</Text>
+                <Text style={themedStyles.resultStatLabel}>Süre</Text>
               </View>
             </View>
 
             {wrongAnswersList.length > 0 && (
               <TouchableOpacity
-                style={[styles.resultButton, { backgroundColor: Colors.error + '12', borderWidth: 1, borderColor: Colors.error + '30' }]}
+                style={[themedStyles.resultButton, { backgroundColor: colors.error + '12', borderWidth: 1, borderColor: colors.error + '30' }]}
                 onPress={() => router.push('/wrong-answers' as any)}
                 activeOpacity={0.8}
               >
-                <XCircle color={Colors.error} size={18} />
-                <Text style={[styles.resultButtonText, { color: Colors.error }]}>
+                <XCircle color={colors.error} size={18} />
+                <Text style={[themedStyles.resultButtonText, { color: colors.error }]}>
                   Yanlışları İncele ({wrongAnswersList.length})
                 </Text>
               </TouchableOpacity>
             )}
 
             <TouchableOpacity
-              style={[styles.resultButton, { backgroundColor: topic.color }]}
+              style={[themedStyles.resultButton, { backgroundColor: topic.color }]}
               onPress={() => {
                 setCurrentIndex(0);
                 setSelectedAnswer(null);
@@ -261,16 +260,16 @@ export default function QuizScreen() {
               }}
               activeOpacity={0.8}
             >
-              <RotateCcw color={Colors.white} size={18} />
-              <Text style={styles.resultButtonText}>Tekrar Çöz</Text>
+              <RotateCcw color={colors.white} size={18} />
+              <Text style={themedStyles.resultButtonText}>Tekrar Çöz</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.resultBackButton}
+              style={themedStyles.resultBackButton}
               onPress={() => router.back()}
               activeOpacity={0.7}
             >
-              <Text style={styles.resultBackText}>Konuya Dön</Text>
+              <Text style={themedStyles.resultBackText}>Konuya Dön</Text>
             </TouchableOpacity>
           </ScrollView>
         </SafeAreaView>
@@ -281,76 +280,76 @@ export default function QuizScreen() {
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
-        <View style={styles.quizHeader}>
-          <Pressable style={styles.closeButton} onPress={() => router.back()} hitSlop={12}>
-            <X color={Colors.textSecondary} size={22} />
+    <View style={themedStyles.container}>
+      <SafeAreaView edges={['top', 'bottom']} style={themedStyles.safeArea}>
+        <View style={themedStyles.quizHeader}>
+          <Pressable style={themedStyles.closeButton} onPress={() => router.back()} hitSlop={12}>
+            <X color={colors.textSecondary} size={22} />
           </Pressable>
-          <View style={styles.progressInfo}>
-            <Text style={styles.progressText}>{currentIndex + 1}/{questions.length}</Text>
+          <View style={themedStyles.progressInfo}>
+            <Text style={themedStyles.progressText}>{currentIndex + 1}/{questions.length}</Text>
           </View>
-          <View style={styles.timerBadge}>
-            <Clock color={Colors.accent} size={13} />
-            <Text style={styles.timerText}>{formatTime(elapsedSeconds)}</Text>
+          <View style={themedStyles.timerBadge}>
+            <Clock color={colors.accent} size={13} />
+            <Text style={themedStyles.timerText}>{formatTime(elapsedSeconds)}</Text>
           </View>
         </View>
 
-        <View style={styles.progressBarContainer}>
-          <View style={styles.progressBarBg}>
+        <View style={themedStyles.progressBarContainer}>
+          <View style={themedStyles.progressBarBg}>
             <View
-              style={[styles.progressBarFill, { width: `${progressPercent}%`, backgroundColor: topic.color }]}
+              style={[themedStyles.progressBarFill, { width: `${progressPercent}%`, backgroundColor: topic.color }]}
             />
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.quizContent}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={themedStyles.quizContent}>
           <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
-            <Text style={styles.questionText}>{currentQuestion.text}</Text>
+            <Text style={themedStyles.questionText}>{currentQuestion.text}</Text>
 
             {currentQuestion.options.map((option, index) => (
               <TouchableOpacity
                 key={index}
-                style={[styles.optionButton, getOptionStyle(index)]}
+                style={[themedStyles.optionButton, getOptionStyle(index)]}
                 activeOpacity={showResult ? 1 : 0.7}
                 onPress={() => handleSelectAnswer(index)}
                 disabled={showResult}
               >
-                <View style={styles.optionLetter}>
-                  <Text style={[styles.optionLetterText, getOptionTextStyle(index)]}>
+                <View style={themedStyles.optionLetter}>
+                  <Text style={[themedStyles.optionLetterText, getOptionTextStyle(index)]}>
                     {String.fromCharCode(65 + index)}
                   </Text>
                 </View>
-                <Text style={[styles.optionText, getOptionTextStyle(index)]}>{option}</Text>
+                <Text style={[themedStyles.optionText, getOptionTextStyle(index)]}>{option}</Text>
                 {showResult && index === currentQuestion.correctAnswer && (
-                  <Check color={Colors.success} size={20} />
+                  <Check color={colors.success} size={20} />
                 )}
                 {showResult && index === selectedAnswer && index !== currentQuestion.correctAnswer && (
-                  <XCircle color={Colors.error} size={20} />
+                  <XCircle color={colors.error} size={20} />
                 )}
               </TouchableOpacity>
             ))}
 
             {showResult && (
-              <View style={styles.explanationCard}>
-                <Text style={styles.explanationTitle}>Açıklama</Text>
-                <Text style={styles.explanationText}>{currentQuestion.explanation}</Text>
+              <View style={themedStyles.explanationCard}>
+                <Text style={themedStyles.explanationTitle}>Açıklama</Text>
+                <Text style={themedStyles.explanationText}>{currentQuestion.explanation}</Text>
               </View>
             )}
           </Animated.View>
         </ScrollView>
 
         {showResult && (
-          <View style={styles.nextButtonContainer}>
+          <View style={themedStyles.nextButtonContainer}>
             <TouchableOpacity
-              style={[styles.nextButton, { backgroundColor: topic.color }]}
+              style={[themedStyles.nextButton, { backgroundColor: topic.color }]}
               activeOpacity={0.8}
               onPress={handleNext}
             >
-              <Text style={styles.nextButtonText}>
+              <Text style={themedStyles.nextButtonText}>
                 {currentIndex < questions.length - 1 ? 'Sonraki Soru' : 'Sonuçları Gör'}
               </Text>
-              <ChevronRight color={Colors.white} size={20} />
+              <ChevronRight color={colors.white} size={20} />
             </TouchableOpacity>
           </View>
         )}
@@ -359,10 +358,10 @@ export default function QuizScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   safeArea: {
     flex: 1,
@@ -378,9 +377,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   progressInfo: {
     alignItems: 'center',
@@ -388,13 +389,13 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.primary,
+    color: colors.primary,
   },
   timerBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: Colors.accent + '15',
+    backgroundColor: colors.accent + '15',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 10,
@@ -402,7 +403,7 @@ const styles = StyleSheet.create({
   timerText: {
     fontSize: 13,
     fontWeight: '700' as const,
-    color: Colors.accentDark,
+    color: colors.accent,
   },
   progressBarContainer: {
     paddingHorizontal: 20,
@@ -410,7 +411,7 @@ const styles = StyleSheet.create({
   },
   progressBarBg: {
     height: 6,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: colors.border,
     borderRadius: 3,
     overflow: 'hidden',
   },
@@ -426,7 +427,7 @@ const styles = StyleSheet.create({
   questionText: {
     fontSize: 18,
     fontWeight: '700' as const,
-    color: Colors.primary,
+    color: colors.text,
     lineHeight: 26,
     marginBottom: 24,
   },
@@ -439,27 +440,27 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   optionDefault: {
-    backgroundColor: Colors.surface,
-    borderColor: Colors.border,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
   },
   optionCorrect: {
-    backgroundColor: Colors.successLight,
-    borderColor: Colors.success,
+    backgroundColor: colors.success + '15',
+    borderColor: colors.success,
   },
   optionWrong: {
-    backgroundColor: Colors.errorLight,
-    borderColor: Colors.error,
+    backgroundColor: colors.error + '15',
+    borderColor: colors.error,
   },
   optionDisabled: {
-    backgroundColor: Colors.surface,
-    borderColor: Colors.borderLight,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
     opacity: 0.5,
   },
   optionLetter: {
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.surfaceAlt,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -469,16 +470,16 @@ const styles = StyleSheet.create({
     fontWeight: '700' as const,
   },
   optionTextDefault: {
-    color: Colors.text,
+    color: colors.text,
   },
   optionTextCorrect: {
-    color: Colors.success,
+    color: colors.success,
   },
   optionTextWrong: {
-    color: Colors.error,
+    color: colors.error,
   },
   optionTextDisabled: {
-    color: Colors.textLight,
+    color: colors.textLight,
   },
   optionText: {
     flex: 1,
@@ -487,22 +488,22 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   explanationCard: {
-    backgroundColor: Colors.accent + '10',
+    backgroundColor: colors.accent + '10',
     borderRadius: 14,
     padding: 16,
     marginTop: 8,
     borderLeftWidth: 3,
-    borderLeftColor: Colors.accent,
+    borderLeftColor: colors.accent,
   },
   explanationTitle: {
     fontSize: 13,
     fontWeight: '700' as const,
-    color: Colors.accentDark,
+    color: colors.accent,
     marginBottom: 4,
   },
   explanationText: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   nextButtonContainer: {
@@ -513,7 +514,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: Platform.OS === 'web' ? 20 : 36,
     paddingTop: 12,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   nextButton: {
     flexDirection: 'row',
@@ -531,7 +532,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: 16,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: colors.white,
   },
   resultContainer: {
     paddingHorizontal: 20,
@@ -550,12 +551,12 @@ const styles = StyleSheet.create({
   resultTitle: {
     fontSize: 24,
     fontWeight: '800' as const,
-    color: Colors.primary,
+    color: colors.text,
     marginBottom: 4,
   },
   resultTopicName: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 16,
   },
   resultAccuracy: {
@@ -565,16 +566,18 @@ const styles = StyleSheet.create({
   },
   resultStats: {
     flexDirection: 'row',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 20,
     width: '100%',
     marginBottom: 24,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   resultStat: {
     flex: 1,
@@ -582,16 +585,16 @@ const styles = StyleSheet.create({
   },
   resultStatDivider: {
     width: 1,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: colors.border,
   },
   resultStatValue: {
     fontSize: 20,
     fontWeight: '800' as const,
-    color: Colors.text,
+    color: colors.text,
   },
   resultStatLabel: {
     fontSize: 11,
-    color: Colors.textLight,
+    color: colors.textLight,
     marginTop: 2,
     fontWeight: '500' as const,
   },
@@ -608,7 +611,7 @@ const styles = StyleSheet.create({
   resultButtonText: {
     fontSize: 16,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: colors.white,
   },
   resultBackButton: {
     padding: 12,
@@ -616,11 +619,11 @@ const styles = StyleSheet.create({
   resultBackText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
   },
   errorText: {
     fontSize: 16,
-    color: Colors.error,
+    color: colors.error,
     textAlign: 'center' as const,
     marginTop: 40,
   },
@@ -632,6 +635,6 @@ const styles = StyleSheet.create({
   backBtnText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: colors.primary,
   },
 });

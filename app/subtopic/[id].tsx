@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,14 +24,15 @@ import {
   Send,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import Colors from '@/constants/colors';
 import { topics } from '@/mocks/topics';
 import { useStudy } from '@/providers/StudyProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 import { StudyNote } from '@/types';
 
 export default function SubtopicDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { colors } = useTheme();
   const {
     isSubtopicBookmarked,
     toggleBookmarkSubtopic,
@@ -40,6 +43,8 @@ export default function SubtopicDetailScreen() {
 
   const [showNoteInput, setShowNoteInput] = useState<boolean>(false);
   const [noteText, setNoteText] = useState<string>('');
+
+  const themedStyles = useMemo(() => styles(colors), [colors]);
 
   let foundSubtopic = null;
   let parentTopic = null;
@@ -54,9 +59,9 @@ export default function SubtopicDetailScreen() {
 
   if (!foundSubtopic || !parentTopic) {
     return (
-      <View style={styles.container}>
-        <SafeAreaView style={styles.safeArea}>
-          <Text style={styles.errorText}>Alt konu bulunamadı</Text>
+      <View style={themedStyles.container}>
+        <SafeAreaView style={themedStyles.safeArea}>
+          <Text style={themedStyles.errorText}>Alt konu bulunamadı</Text>
         </SafeAreaView>
       </View>
     );
@@ -96,82 +101,86 @@ export default function SubtopicDetailScreen() {
   }, [deleteNote]);
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={styles.safeArea}>
-        <View style={styles.header}>
+    <KeyboardAvoidingView 
+      style={themedStyles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <SafeAreaView edges={['top']} style={themedStyles.safeArea}>
+        <View style={themedStyles.header}>
           <Pressable
-            style={styles.backButton}
+            style={themedStyles.backButton}
             onPress={() => router.back()}
             hitSlop={12}
           >
-            <ArrowLeft color={Colors.primary} size={22} />
+            <ArrowLeft color={colors.primary} size={22} />
           </Pressable>
           <Pressable
-            style={styles.bookmarkButton}
+            style={themedStyles.bookmarkButton}
             onPress={handleBookmark}
             hitSlop={12}
           >
             {isBookmarked ? (
-              <BookmarkCheck color={Colors.accent} size={22} />
+              <BookmarkCheck color={colors.accent} size={22} />
             ) : (
-              <Bookmark color={Colors.textLight} size={22} />
+              <Bookmark color={colors.textLight} size={22} />
             )}
           </Pressable>
         </View>
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={themedStyles.scrollContent}
+          keyboardShouldPersistTaps="handled"
         >
-          <View style={[styles.topicBadge, { backgroundColor: topic.color + '15' }]}>
-            <Text style={[styles.topicBadgeText, { color: topic.color }]}>
+          <View style={[themedStyles.topicBadge, { backgroundColor: topic.color + '15' }]}>
+            <Text style={[themedStyles.topicBadgeText, { color: topic.color }]}>
               {topic.title}
             </Text>
           </View>
 
-          <Text style={styles.title}>{subtopic.title}</Text>
+          <Text style={themedStyles.title}>{subtopic.title}</Text>
 
-          <View style={styles.contentCard}>
-            <Text style={styles.contentText}>{subtopic.content}</Text>
+          <View style={themedStyles.contentCard}>
+            <Text style={themedStyles.contentText}>{subtopic.content}</Text>
           </View>
 
-          <Text style={styles.sectionTitle}>Önemli Noktalar</Text>
+          <Text style={themedStyles.sectionTitle}>Önemli Noktalar</Text>
 
           {subtopic.keyPoints.map((point, index) => (
-            <View key={index} style={styles.keyPointCard}>
+            <View key={index} style={themedStyles.keyPointCard}>
               <View
                 style={[
-                  styles.keyPointIcon,
+                  themedStyles.keyPointIcon,
                   { backgroundColor: topic.color + '15' },
                 ]}
               >
                 <CircleDot color={topic.color} size={16} />
               </View>
-              <Text style={styles.keyPointText}>{point}</Text>
+              <Text style={themedStyles.keyPointText}>{point}</Text>
             </View>
           ))}
 
-          <View style={styles.notesSection}>
-            <View style={styles.notesSectionHeader}>
-              <View style={styles.notesTitleRow}>
-                <StickyNote color={Colors.primary} size={16} />
-                <Text style={styles.sectionTitle}>Notlarım</Text>
+          <View style={themedStyles.notesSection}>
+            <View style={themedStyles.notesSectionHeader}>
+              <View style={themedStyles.notesTitleRow}>
+                <StickyNote color={colors.primary} size={16} />
+                <Text style={themedStyles.sectionTitle}>Notlarım</Text>
               </View>
               <TouchableOpacity
-                style={styles.addNoteBtn}
+                style={themedStyles.addNoteBtn}
                 onPress={() => setShowNoteInput(!showNoteInput)}
               >
-                <Plus color={Colors.primary} size={16} />
-                <Text style={styles.addNoteBtnText}>Ekle</Text>
+                <Plus color={colors.primary} size={16} />
+                <Text style={themedStyles.addNoteBtnText}>Ekle</Text>
               </TouchableOpacity>
             </View>
 
             {showNoteInput && (
-              <View style={styles.noteInputContainer}>
+              <View style={themedStyles.noteInputContainer}>
                 <TextInput
-                  style={styles.noteInput}
+                  style={themedStyles.noteInput}
                   placeholder="Notunuzu yazın..."
-                  placeholderTextColor={Colors.textLight}
+                  placeholderTextColor={colors.textLight}
                   value={noteText}
                   onChangeText={setNoteText}
                   multiline
@@ -180,14 +189,14 @@ export default function SubtopicDetailScreen() {
                 />
                 <TouchableOpacity
                   style={[
-                    styles.sendNoteBtn,
-                    !noteText.trim() && styles.sendNoteBtnDisabled,
+                    themedStyles.sendNoteBtn,
+                    !noteText.trim() && themedStyles.sendNoteBtnDisabled,
                   ]}
                   onPress={handleAddNote}
                   disabled={!noteText.trim()}
                 >
                   <Send
-                    color={noteText.trim() ? Colors.white : Colors.textLight}
+                    color={noteText.trim() ? colors.white : colors.textLight}
                     size={16}
                   />
                 </TouchableOpacity>
@@ -195,40 +204,40 @@ export default function SubtopicDetailScreen() {
             )}
 
             {notes.length === 0 && !showNoteInput && (
-              <Text style={styles.noNotesText}>
+              <Text style={themedStyles.noNotesText}>
                 Henüz not eklemediniz. Önemli bilgileri not alarak hatırlamayı kolaylaştırın.
               </Text>
             )}
 
             {notes.map((note) => (
-              <View key={note.id} style={styles.noteCard}>
-                <Text style={styles.noteText}>{note.text}</Text>
-                <View style={styles.noteFooter}>
-                  <Text style={styles.noteDate}>
+              <View key={note.id} style={themedStyles.noteCard}>
+                <Text style={themedStyles.noteText}>{note.text}</Text>
+                <View style={themedStyles.noteFooter}>
+                  <Text style={themedStyles.noteDate}>
                     {new Date(note.createdAt).toLocaleDateString('tr-TR')}
                   </Text>
                   <TouchableOpacity
                     onPress={() => handleDeleteNote(note.id)}
                     hitSlop={12}
                   >
-                    <Trash2 color={Colors.textLight} size={14} />
+                    <Trash2 color={colors.textLight} size={14} />
                   </TouchableOpacity>
                 </View>
               </View>
             ))}
           </View>
 
-          <View style={styles.bottomSpacer} />
+          <View style={themedStyles.bottomSpacer} />
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   safeArea: {
     flex: 1,
@@ -244,27 +253,31 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 6,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   bookmarkButton: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 6,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   scrollContent: {
     paddingHorizontal: 20,
@@ -283,44 +296,48 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800' as const,
-    color: Colors.primary,
+    color: colors.primary,
     letterSpacing: -0.3,
     marginBottom: 20,
   },
   contentCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 20,
     marginBottom: 24,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   contentText: {
     fontSize: 15,
-    color: Colors.text,
+    color: colors.text,
     lineHeight: 24,
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: '700' as const,
-    color: Colors.primary,
+    color: colors.primary,
     marginBottom: 14,
   },
   keyPointCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 1,
     shadowRadius: 4,
     elevation: 1,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   keyPointIcon: {
     width: 32,
@@ -334,7 +351,7 @@ const styles = StyleSheet.create({
   keyPointText: {
     flex: 1,
     fontSize: 14,
-    color: Colors.text,
+    color: colors.text,
     lineHeight: 20,
     fontWeight: '500' as const,
   },
@@ -359,28 +376,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
-    backgroundColor: Colors.primary + '10',
+    backgroundColor: colors.primary + '10',
   },
   addNoteBtnText: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: colors.primary,
   },
   noteInputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: Colors.primary + '30',
+    borderColor: colors.primary + '30',
     gap: 10,
   },
   noteInput: {
     flex: 1,
     fontSize: 14,
-    color: Colors.text,
+    color: colors.text,
     minHeight: 60,
     maxHeight: 120,
     padding: 0,
@@ -389,30 +406,32 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   sendNoteBtnDisabled: {
-    backgroundColor: Colors.borderLight,
+    backgroundColor: colors.borderLight,
   },
   noNotesText: {
     fontSize: 13,
-    color: Colors.textLight,
+    color: colors.textLight,
     lineHeight: 20,
     marginBottom: 8,
   },
   noteCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
     borderLeftWidth: 3,
-    borderLeftColor: Colors.accent,
+    borderLeftColor: colors.accent,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   noteText: {
     fontSize: 14,
-    color: Colors.text,
+    color: colors.text,
     lineHeight: 20,
   },
   noteFooter: {
@@ -423,11 +442,11 @@ const styles = StyleSheet.create({
   },
   noteDate: {
     fontSize: 11,
-    color: Colors.textLight,
+    color: colors.textLight,
   },
   errorText: {
     fontSize: 16,
-    color: Colors.error,
+    color: colors.error,
     textAlign: 'center' as const,
     marginTop: 40,
   },

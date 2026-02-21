@@ -2,80 +2,119 @@ export interface Term {
   id: string;
   term: string;
   definition: string;
-  category?: string;
+  category: string;
 }
 
 export const terms: Term[] = [
-  {
-    id: '1',
-    term: 'İskan Politikası',
-    definition: 'Osmanlı Devleti\'nin Balkanlar\'da fethettiği topraklara Anadolu\'daki Türkmenleri yerleştirerek bölgeyi Türkleştirme ve İslamlaştırma çabasıdır.',
-    category: 'Osmanlı'
-  },
-  {
-    id: '2',
-    term: 'Kut İnancı',
-    definition: 'Eski Türklerde hükümdarlığın tanrı tarafından verildiğine inanılan kutsal güçtür. Kan yoluyla babadan oğula geçer.',
-    category: 'İslam Öncesi'
-  },
-  {
-    id: '3',
-    term: 'Nizam-ı Cedid',
-    definition: 'III. Selim tarafından kurulan modern ordu ve bu ordunun ihtiyaçlarını karşılamak için yapılan ıslahatların genel adıdır.',
-    category: 'Osmanlı'
-  },
-  {
-    id: '4',
-    term: 'İstimalet Politikası',
-    definition: 'Osmanlı Devleti\'nin fethettiği bölgelerdeki gayrimüslim halka karşı uyguladığı hoşgörü ve adalet politikasıdır.',
-    category: 'Osmanlı'
-  },
-  {
-    id: '5',
-    term: 'Tımar Sistemi',
-    definition: 'Devletin, asker ve memurlarına hizmetleri karşılığında belirli toprakların vergi gelirlerini bırakması sistemidir. Hem askeri hem ekonomik amaçlıdır.',
-    category: 'Osmanlı'
-  },
-  {
-    id: '6',
-    term: 'Kurultay (Toy)',
-    definition: 'Eski Türk devletlerinde devlet işlerinin görüşülüp karara bağlandığı meclise verilen isimdir.',
-    category: 'İslam Öncesi'
-  },
-  {
-    id: '7',
-    term: 'Millet Sistemi',
-    definition: 'Osmanlı toplumunun ırk esasına göre değil, dinsel inançlarına göre (Müslüman, Rum, Ermeni, Yahudi) örgütlenmesidir.',
-    category: 'Osmanlı'
-  },
-  {
-    id: '8',
-    term: 'Ahilik',
-    definition: 'Anadolu\'da Selçuklular döneminde kurulan, esnaf ve sanatkarların dayanışma, eğitim ve denetim teşkilatıdır.',
-    category: 'Selçuklu/Osmanlı'
-  },
-  {
-    id: '9',
-    term: 'Devşirme Sistemi',
-    definition: 'Hristiyan ailelerin çocuklarının devlet hizmetine ve ordunun ihtiyacı için küçük yaşta alınıp Türk-İslam kültürüyle yetiştirilmesi sistemidir.',
-    category: 'Osmanlı'
-  },
-  {
-    id: '10',
-    term: 'Veraset Sistemi',
-    definition: 'Hükümdarlığın kimden kime ve ne şekilde geçeceğini belirleyen kurallar bütünüdür.',
-    category: 'Genel'
-  },
-  {
-    id: '11',
-    term: 'Vakıf Sistemi',
-    definition: 'Bireylerin kendilerine ait mülkleri veya gelirleri, toplumsal hizmetler için (cami, okul, hastane vb.) kalıcı olarak bağışlamasıdır.',
-    category: 'Genel'
-  },
-  {
-    id: '12',
-    term: 'Reaya',
-    definition: 'Osmanlı Devleti\'nde yönetime katılmayan, vergi veren halk kesimidir (Müslüman ve gayrimüslim tebaa).',
-    category: 'Osmanlı'
-  }
+  // İslamiyet Öncesi Türk Tarihi
+  { id: '1', term: 'Kut', category: 'Devlet Yönetimi', definition: 'Hükümdarlığın Tanrı tarafından verildiğine inanılan kutsal güç.' },
+  { id: '2', term: 'Kurultay (Toy)', category: 'Devlet Yönetimi', definition: 'Eski Türklerde devlet işlerinin görüşüldüğü meclis.' },
+  { id: '3', term: 'Töre', category: 'Hukuk', definition: 'Yazısız hukuk kuralları, örf ve adetler.' },
+  { id: '4', term: 'Tigin', category: 'Devlet Yönetimi', definition: 'Hükümdarın oğullarına verilen isim, şehzade.' },
+  { id: '5', term: 'Şaman (Kam/Baksı)', category: 'Din', definition: 'Din adamı ve büyücü.' },
+  { id: '6', term: 'Kurgan', category: 'Kültür', definition: 'Eski Türklerde yığma tepe şeklindeki mezar.' },
+  { id: '7', term: 'Balbal', category: 'Sanat', definition: 'Ölen savaşçının öldürdüğü düşman sayısı kadar dikilen mezar taşı heykelcikleri.' },
+  { id: '8', term: 'Yuğ', category: 'Din', definition: 'Eski Türklerde düzenlenen cenaze töreni.' },
+  { id: '9', term: 'Sagu', category: 'Edebiyat', definition: 'Yuğ törenlerinde okunan ağıt.' },
+  { id: '10', term: 'Taman', category: 'Ekonomi', definition: 'Eski Türklerde vergi memuru.' },
+  { id: '11', term: 'Ongun', category: 'Din', definition: 'Totemizmde kutsal sayılan hayvan veya nesne.' },
+  { id: '12', term: 'Bitigçi', category: 'Devlet Yönetimi', definition: 'Yazıcı, katip.' },
+  { id: '13', term: 'Boylar Federasyonu', category: 'Siyasi Yapı', definition: 'Boyların kendi içlerinde serbest, dışarıda merkeze bağlı olduğu yönetim biçimi.' },
+  { id: '14', term: 'Uçmag', category: 'Din', definition: 'Cennet.' },
+  { id: '15', term: 'Tamu', category: 'Din', definition: 'Cehennem.' },
+  { id: '16', term: 'Kopuz', category: 'Kültür', definition: 'Eski Türk telli müzik aleti.' },
+  { id: '17', term: 'Ataman (İnal/İnanç)', category: 'Eğitim', definition: 'Tiginleri eğiten görevli.' },
+  
+  // Türk-İslam Devletleri
+  { id: '18', term: 'Atabey', category: 'Eğitim/Yönetim', definition: 'Selçuklularda şehzadelerin eğitiminden sorumlu hoca, eğitmen.' },
+  { id: '19', term: 'İkta Sistemi', category: 'Ekonomi/Askeri', definition: 'Devlete ait toprakların ordu mensuplarına hizmet karşılığı verilmesi ve bu topraklardan asker yetiştirilmesi sistemi.' },
+  { id: '20', term: 'Gaza ve Cihat', category: 'Dini/Askeri', definition: 'İslam dinini yaymak ve korumak amacıyla yapılan kutsal savaş.' },
+  { id: '21', term: 'Divan-ı Saltanat', category: 'Devlet Yönetimi', definition: 'Büyük Selçuklularda devlet işlerinin yürütüldüğü en büyük divan.' },
+  { id: '22', term: 'Melik', category: 'Siyasi Yapı', definition: 'Şehzadelerin taşradaki idari görevlerinde kullandıkları unvan.' },
+  { id: '23', term: 'Ahilik', category: 'Ekonomi/Sosyal', definition: 'Esnaf ve sanatkarların kurduğu dayanışma ve ahlak teşkilatı.' },
+  { id: '24', term: 'Külliye', category: 'Mimari', definition: 'Cami merkezli olup hamam, medrese gibi yapıların toplandığı kompleks.' },
+  { id: '25', term: 'Darüşşifa', category: 'Sosyal/Sağlık', definition: 'Hastane, tıp fakültesi.' },
+  { id: '26', term: 'Ribat', category: 'Askeri/Ticari', definition: 'Karahanlılarda kervansaray ve askeri karakol olarak kullanılan yapılar.' },
+  { id: '27', term: 'Has Topraklar', category: 'Toprak Sistemi', definition: 'Geliri doğrudan hükümdara ve ailesine ayrılan topraklar.' },
+  { id: '28', term: 'Lonca', category: 'Ekonomi', definition: 'Osmanlı öncesi ve Osmanlı esnaf örgütlenmesi.' },
+  { id: '29', term: 'Emir-i Dad', category: 'Adalet', definition: 'Örfi yargıdan sorumlu adalet görevlisi.' },
+  { id: '30', term: 'Kadılkudat', category: 'Adalet', definition: 'Şer-i yargının başı olan başkadı.' },
+  
+  // Osmanlı Devleti - Yönetim ve Toplum
+  { id: '31', term: 'Padişah', category: 'Devlet Yönetimi', definition: 'Osmanlı devlet başkanı, mutlak otorite.' },
+  { id: '32', term: 'Sadr-ı Azam (Vezir-i Azam)', category: 'Devlet Yönetimi', definition: 'Padişahın mutlak vekili ve yürütmenin başı.' },
+  { id: '33', term: 'Nişancı', category: 'Bürokrasi', definition: 'Padişah fermanlarına tuğra çeken, arazi kayıtlarını tutan görevli.' },
+  { id: '34', term: 'Defterdar', category: 'Ekonomi', definition: 'Maliyeden sorumlu devlet görevlisi.' },
+  { id: '35', term: 'Kazasker', category: 'Adalet/Eğitim', definition: 'Adalet ve eğitim işlerine bakan, kadı ve müderris atayan görevli.' },
+  { id: '36', term: 'Şeyhülislam', category: 'Din/Hukuk', definition: 'Devlet işlerinin dine uygunluğu hakkında fetva veren en yetkili din adamı.' },
+  { id: '37', term: 'Divan-ı Hümayun', category: 'Devlet Yönetimi', definition: 'Devlet işlerinin görüşülüp karara bağlandığı en üst kurul.' },
+  { id: '38', term: 'Devşirme Sistemi', category: 'Askeri/Siyasi', definition: 'Hristiyan çocukların alınarak Türk-İslam terbiyesiyle yetiştirilip devlet hizmetine alınması.' },
+  { id: '39', term: 'Cülus Bahşişi', category: 'Askeri/Gelenek', definition: 'Padişah tahta çıktığında askerlere verilen bahşiş.' },
+  { id: '40', term: 'Reaya', category: 'Toplum', definition: 'Osmanlı toplumunda vergi veren yönetilen kesim.' },
+  { id: '41', term: 'Millet Sistemi', category: 'Toplum', definition: 'Toplumun ırk değil din esasına göre örgütlendiği düzen.' },
+  { id: '42', term: 'İstimalet Politikası', category: 'Siyasi', definition: 'Osmanlı\'nın fethedilen yerlerde halka gösterdiği hoşgörü ve adalet politikası.' },
+  { id: '43', term: 'Vakıf Sistemi', category: 'Sosyal', definition: 'Bireylerin mülklerini kamu hayrına bağışlaması ile işleyen sistem.' },
+  { id: '44', term: 'Sened-i İttifak', category: 'Hukuk/Siyasi', definition: 'Padişah (II. Mahmut) ile Ayanlar arasında imzalanan, padişah yetkilerini kısıtlayan ilk belge.' },
+  { id: '45', term: 'Tanzimat Fermanı (1839)', category: 'Hukuk', definition: 'Hukukun üstünlüğünün kabul edildiği, vatandaşlık haklarını düzenleyen ferman.' },
+  { id: '46', term: 'Islahat Fermanı (1856)', category: 'Hukuk', definition: 'Gayrimüslimlere ekstra haklar veren Batılılaşma belgesi.' },
+  { id: '47', term: 'Kanun-i Esasi (1876)', category: 'Hukuk/Anayasa', definition: 'Türk tarihinin ilk anayasası.' },
+  { id: '48', term: 'Meclis-i Mebusan', category: 'Siyasi Yapı', definition: 'Halk tarafından seçilen ve killerden oluşan parlamento kanadı.' },
+  { id: '49', term: 'Meclis-i Ayan', category: 'Siyasi Yapı', definition: 'Padişah tarafından atanan ve ömür boyu görevde kalan meclis üyeleri.' },
+  { id: '50', term: 'Ulufe', category: 'Askeri', definition: 'Yeniçerilere her üç ayda bir verilen maaş.' },
+  
+  // Osmanlı - Askeri ve Bürokrasi
+  { id: '51', term: 'Yeniçeri Ocağı', category: 'Askeri', definition: 'Osmanlı merkez ordusunun ana gücü.' },
+  { id: '52', term: 'Tımar Sistemi', category: 'Ekonomi/Askeri', definition: 'Toprak gelirinin hizmet karşılığı verilmesi ve bu sayede bedava ordu (cebelü) kurulması.' },
+  { id: '53', term: 'Dirlik Toprak', category: 'Toprak Sistemi', definition: 'Has, Zeamet ve Tımar olarak üçe ayrılan maaş ve hizmet toprağı.' },
+  { id: '54', term: 'Kapıkulu Süvarileri', category: 'Askeri', definition: 'Merkez ordusundaki atlı birlikler.' },
+  { id: '55', term: 'Akıncılar', category: 'Askeri', definition: 'Sınır boylarında keşif ve yıpratma görevleri yapan hafif atlı birlikler.' },
+  { id: '56', term: 'Salyaneli Eyaletler', category: 'İdari', definition: 'Maaşlı eyaletler; iltizam sisteminin uygulandığı, merkezden uzak yerler.' },
+  { id: '57', term: 'Salyanesiz Eyaletler', category: 'İdari', definition: 'Maaşsız eyaletler; tımar sisteminin uygulandığı merkeze yakın yerler.' },
+  { id: '58', term: 'İltizam Sistemi', category: 'Ekonomi', definition: 'Vergi toplama hakkının açık artırmayla nakit karşılığı devredilmesi.' },
+  { id: '59', term: 'Mültezim', category: 'Ekonomi', definition: 'İltizam yoluyla vergi toplama hakkını alan kişi.' },
+  { id: '60', term: 'Malikane Sistemi', category: 'Ekonomi', definition: 'İltizamın ömür boyu bir kişiye verilmesi.' },
+  { id: '61', term: 'Balyos', category: 'Diplomasi', definition: 'Venedik elçilerine verilen isim.' },
+  { id: '62', term: 'Reis-ül Küttab', category: 'Bürokrasi', definition: 'Osmanlı dış işlerinden sorumlu baş katip.' },
+  { id: '63', term: 'Dragoman', category: 'Diplomasi', definition: 'Tercüman.' },
+  { id: '64', term: 'Bab-ı Ali', category: 'Yönetim Merkezi', definition: 'Osmanlı hükümet merkezi, Sadrazam kapısı.' },
+  { id: '65', term: 'Kalyon', category: 'Denizcilik', definition: 'Büyük yelkenli savaş gemisi.' },
+  
+  // Islahatlar ve 20. Yüzyıl
+  { id: '66', term: 'Enderun', category: 'Eğitim', definition: 'Saraydaki devlet adamı yetiştiren okul.' },
+  { id: '67', term: 'Ulema', category: 'Toplum/Alim', definition: 'Bilginler sınıfı, dini ve hukuki otorite.' },
+  { id: '68', term: 'Vaka-i Hayriye', category: 'Askeri/Tarihi Olay', definition: 'Yeniçeri Ocağı\'nın 1826 yılında kaldırılması olayı.' },
+  { id: '69', term: 'Nizam-ı Cedid', category: 'Askeri/Islahat', definition: 'III. Selim tarafından kurulan modern ordu ve yapılan tüm yeniliklerin genel adı.' },
+  { id: '70', term: 'İrad-ı Cedid', category: 'Ekonomi', definition: 'Nizam-ı Cedid ordusunun masraflarını karşılamak için kurulan hazine.' },
+  { id: '71', term: 'Esham Sistemi', category: 'Ekonomi', definition: 'İç borçlanma senedi.' },
+  { id: '72', term: 'Düyun-u Umumiye', category: 'Ekonomi', definition: 'Osmanlı borçlarını tahsil etmek için kurulan Genel Borçlar İdaresi.' },
+  { id: '73', term: 'Encümen-i Daniş', category: 'Eğitim/Bilim', definition: 'Osmanlı ders kitaplarını hazırlamak için kurulan bilim kurulu.' },
+  { id: '74', term: 'Asakir-i Mansure-i Muhammediye', category: 'Askeri', definition: 'Yeniçeri Ocağı kaldırıldıktan sonra kurulan ordu.' },
+  { id: '75', term: 'Mecelle', category: 'Hukuk', definition: 'Osmanlı\'nın ilk medeni kanunu (İslami esaslı).' },
+  
+  // Milli Mücadele ve Cumhuriyet
+  { id: '76', term: 'Misak-ı Milli', category: 'Milli Mücadele', definition: 'Milli sınırlarımızı ve bağımsızlık şartlarımızı belirten ant (Milli Yemin).' },
+  { id: '77', term: 'Temsil Heyeti', category: 'Milli Mücadele', definition: 'Sivas Kongresi\'nde kurulan, TBMM açılana kadar milli hareketi yöneten yürütme organı.' },
+  { id: '78', term: 'Müdafaa-i Hukuk Cemiyetleri', category: 'Milli Mücadele', definition: 'Bölgesel kurtuluşu hedefleyen yararlı cemiyetlerin genel adı.' },
+  { id: '79', term: 'Kuvay-ı Milliye', category: 'Milli Mücadele', definition: 'Milli direniş amacıyla kurulan silahlı halk güçleri.' },
+  { id: '80', term: 'Tekalif-i Milliye', category: 'Milli Mücadele', definition: 'Sakarya Meydan Muharebesi öncesi ordunun ihtiyaçları için halktan istenen yardımlar.' },
+  { id: '81', term: 'Mudanya Ateşkesi', category: 'Milli Mücadele/Anlaşma', definition: 'Askeri zaferin ardından diplomasi sürecini başlatan, İstanbul ve Boğazlar\'ın devralındığı anlaşma.' },
+  { id: '82', term: 'Lozan Barış Anlaşması', category: 'Milli Mücadele/Anlaşma', definition: 'Yeni Türk devletinin bağımsızlığının tescil edildiği uluslararası belge.' },
+  { id: '83', term: 'Teşkilat-ı Esasiye (1921)', category: 'Hukuk/Anayasa', definition: 'Yeni Türk devletinin ilk kurucu anayasası.' },
+  { id: '84', term: 'Tevhid-i Tedrisat (1924)', category: 'Eğitim', definition: 'Eğitim ve öğretimin birleştirilmesi yasası.' },
+  { id: '85', term: 'Medeni Kanun (1926)', category: 'Hukuk', definition: 'Sosyal hayatta kadın-erkek eşitliğini sağlayan, aile hukukunu düzenleyen kanun.' },
+  { id: '86', term: 'Kabotaj Kanunu', category: 'Ekonomi/Milli', definition: 'Türk karasularında gemi işletme hakkının Türklere verilmesi.' },
+  { id: '87', term: 'Teşvik-i Sanayi', category: 'Ekonomi', definition: 'Özel sektörü sanayiye teşvik etmek için çıkarılan kanun.' },
+  { id: '88', term: 'Statüko', category: 'Siyasi', definition: 'Var olan durumun aynen devam ettirilmesi.' },
+  { id: '89', term: 'Takrir-i Sükun', category: 'Siyasi', definition: 'Şeyh Sait İsyanı sonrası huzuru sağlamak için çıkarılan sert tedbirler içeren kanun.' },
+  { id: '90', term: 'Laiklik', category: 'Atatürk İlkeleri', definition: 'Din ve devlet işlerinin ayrılması, akıl ve bilim rehberliği.' },
+  { id: '91', term: 'Devletçilik', category: 'Atatürk İlkeleri', definition: 'Ekonominin devlet eliyle kalkındırılması ilkesi.' },
+  { id: '92', term: 'Halkçılık', category: 'Atatürk İlkeleri', definition: 'Toplumda hiçbir sınıfa ayrıcalık tanınmaması ve eşitlik.' },
+  { id: '93', term: 'Montrö Boğazlar Sözleşmesi', category: 'Diplomasi', definition: 'Boğazlardaki Türk egemenliğinin tam olarak sağlandığı sözleşme.' },
+  { id: '94', term: 'Hatay Meselesi', category: 'Diplomasi', definition: '1939\'da anavatana katılan, Atatürk\'ün "Şahsi meselem" dediği sorun.' },
+  { id: '95', term: 'Sadabat Paktı', category: 'Diplomasi', definition: 'Türkiye, İran, Irak ve Afganistan arasında kurulan bölgesel ittifak.' },
+  { id: '96', term: 'Balkan Antantı', category: 'Diplomasi', definition: 'Türkiye, Yunanistan, Yugoslavya ve Romanya arasında kurulan batı sınırı güvenliği ittifakı.' },
+  { id: '97', term: 'Karma Ekonomi', category: 'Ekonomi', definition: 'Hem devletin hem özel sektörün ekonomide yer alması.' },
+  { id: '98', term: 'İnkılapçılık', category: 'Atatürk İlkeleri', definition: 'Sürekli yenileşme ve çağdaşlaşma.' },
+  { id: '99', term: 'Cumhuriyetçilik', category: 'Atatürk İlkeleri', definition: 'Halkın kendi kendini yönetmesi ve milli egemenlik.' },
+  { id: '100', term: 'Milliyetçilik', category: 'Atatürk İlkeleri', definition: 'Milli birlik, beraberlik ve ortak ülkü etrafında toplanma.' },
 ];

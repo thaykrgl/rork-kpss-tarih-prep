@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -20,27 +20,30 @@ import {
   Layers,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import Colors from '@/constants/colors';
 import { topics } from '@/mocks/topics';
 import { questions } from '@/mocks/questions';
 import { flashcards } from '@/mocks/flashcards';
 import { useStudy } from '@/providers/StudyProvider';
 import { usePremium } from '@/providers/PremiumProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 
 export default function TopicDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { colors } = useTheme();
   const {
     isTopicBookmarked,
     toggleBookmarkTopic,
     getTopicQuizResults,
   } = useStudy();
-  const { isPremium, canAccessTopic } = usePremium();
+  const { canAccessTopic } = usePremium();
 
   const topic = topics.find((t) => t.id === id);
   const hasAccess = topic ? canAccessTopic(topic.isPremium) : false;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
+
+  const themedStyles = useMemo(() => styles(colors), [colors]);
 
   useEffect(() => {
     Animated.parallel([
@@ -59,9 +62,9 @@ export default function TopicDetailScreen() {
 
   if (!topic) {
     return (
-      <View style={styles.container}>
-        <SafeAreaView style={styles.safeArea}>
-          <Text style={styles.errorText}>Konu bulunamadı</Text>
+      <View style={themedStyles.container}>
+        <SafeAreaView style={themedStyles.safeArea}>
+          <Text style={themedStyles.errorText}>Konu bulunamadı</Text>
         </SafeAreaView>
       </View>
     );
@@ -91,32 +94,32 @@ export default function TopicDetailScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: topic.color + '08' }]}>
-      <SafeAreaView edges={['top']} style={styles.safeArea}>
-        <View style={styles.header}>
+    <View style={themedStyles.container}>
+      <SafeAreaView edges={['top']} style={themedStyles.safeArea}>
+        <View style={themedStyles.header}>
           <Pressable
-            style={styles.backButton}
+            style={themedStyles.backButton}
             onPress={() => router.back()}
             hitSlop={12}
           >
-            <ArrowLeft color={Colors.primary} size={22} />
+            <ArrowLeft color={colors.primary} size={22} />
           </Pressable>
           <Pressable
-            style={styles.bookmarkButton}
+            style={themedStyles.bookmarkButton}
             onPress={handleBookmark}
             hitSlop={12}
           >
             {isBookmarked ? (
-              <BookmarkCheck color={Colors.accent} size={22} />
+              <BookmarkCheck color={colors.accent} size={22} />
             ) : (
-              <Bookmark color={Colors.textLight} size={22} />
+              <Bookmark color={colors.textLight} size={22} />
             )}
           </Pressable>
         </View>
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={themedStyles.scrollContent}
         >
           <Animated.View
             style={{
@@ -126,37 +129,37 @@ export default function TopicDetailScreen() {
           >
             <View
               style={[
-                styles.topicBanner,
-                { backgroundColor: topic.color + '12' },
+                themedStyles.topicBanner,
+                { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 },
               ]}
             >
               <View
-                style={[styles.bannerBadge, { backgroundColor: topic.color }]}
+                style={[themedStyles.bannerBadge, { backgroundColor: topic.color }]}
               >
-                <Text style={styles.bannerBadgeText}>
+                <Text style={themedStyles.bannerBadgeText}>
                   {topic.subtopics.length} Alt Konu
                 </Text>
               </View>
-              <Text style={styles.topicTitle}>{topic.title}</Text>
-              <Text style={styles.topicDescription}>{topic.description}</Text>
+              <Text style={themedStyles.topicTitle}>{topic.title}</Text>
+              <Text style={themedStyles.topicDescription}>{topic.description}</Text>
 
-              <View style={styles.topicStats}>
-                <View style={styles.topicStat}>
+              <View style={themedStyles.topicStats}>
+                <View style={themedStyles.topicStat}>
                   <FileText color={topic.color} size={16} />
-                  <Text style={styles.topicStatText}>
+                  <Text style={themedStyles.topicStatText}>
                     {topicQuestions.length} Soru
                   </Text>
                 </View>
-                <View style={styles.topicStat}>
+                <View style={themedStyles.topicStat}>
                   <Layers color={topic.color} size={16} />
-                  <Text style={styles.topicStatText}>
+                  <Text style={themedStyles.topicStatText}>
                     {topicFlashcards.length} Kart
                   </Text>
                 </View>
                 {bestScore !== null && (
-                  <View style={styles.topicStat}>
+                  <View style={themedStyles.topicStat}>
                     <Play color={topic.color} size={16} />
-                    <Text style={styles.topicStatText}>
+                    <Text style={themedStyles.topicStatText}>
                       En iyi: %{bestScore}
                     </Text>
                   </View>
@@ -164,9 +167,9 @@ export default function TopicDetailScreen() {
               </View>
             </View>
 
-            <View style={styles.actionRow}>
+            <View style={themedStyles.actionRow}>
               <TouchableOpacity
-                style={[styles.actionButton, { backgroundColor: topic.color }]}
+                style={[themedStyles.actionButton, { backgroundColor: topic.color }]}
                 activeOpacity={0.8}
                 onPress={() =>
                   router.push({
@@ -175,17 +178,17 @@ export default function TopicDetailScreen() {
                   })
                 }
               >
-                <Play color={Colors.white} size={18} />
-                <Text style={styles.actionButtonText}>Test Çöz</Text>
+                <Play color={colors.white} size={18} />
+                <Text style={themedStyles.actionButtonText}>Test Çöz</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[
-                  styles.actionButton,
+                  themedStyles.actionButton,
                   {
-                    backgroundColor: topic.color + '12',
+                    backgroundColor: colors.surface,
                     borderWidth: 1,
-                    borderColor: topic.color + '30',
+                    borderColor: topic.color + '40',
                   },
                 ]}
                 activeOpacity={0.8}
@@ -197,18 +200,18 @@ export default function TopicDetailScreen() {
                 }
               >
                 <Layers color={topic.color} size={18} />
-                <Text style={[styles.actionButtonText, { color: topic.color }]}>
+                <Text style={[themedStyles.actionButtonText, { color: topic.color }]}>
                   Kartlar
                 </Text>
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.sectionTitle}>Alt Konular</Text>
+            <Text style={themedStyles.sectionTitle}>Alt Konular</Text>
 
             {topic.subtopics.map((subtopic, index) => (
               <TouchableOpacity
                 key={subtopic.id}
-                style={styles.subtopicCard}
+                style={themedStyles.subtopicCard}
                 activeOpacity={0.7}
                 onPress={() =>
                   router.push({
@@ -217,38 +220,38 @@ export default function TopicDetailScreen() {
                   })
                 }
               >
-                <View style={styles.subtopicIndex}>
+                <View style={themedStyles.subtopicIndex}>
                   <Text
-                    style={[styles.subtopicIndexText, { color: topic.color }]}
+                    style={[themedStyles.subtopicIndexText, { color: topic.color }]}
                   >
                     {index + 1}
                   </Text>
                 </View>
-                <View style={styles.subtopicInfo}>
-                  <Text style={styles.subtopicTitle}>{subtopic.title}</Text>
-                  <Text style={styles.subtopicContent} numberOfLines={2}>
+                <View style={themedStyles.subtopicInfo}>
+                  <Text style={themedStyles.subtopicTitle}>{subtopic.title}</Text>
+                  <Text style={themedStyles.subtopicContent} numberOfLines={2}>
                     {subtopic.content}
                   </Text>
-                  <Text style={styles.subtopicKeyCount}>
+                  <Text style={themedStyles.subtopicKeyCount}>
                     {subtopic.keyPoints.length} önemli nokta
                   </Text>
                 </View>
-                <ChevronRight color={Colors.textLight} size={18} />
+                <ChevronRight color={colors.textLight} size={18} />
               </TouchableOpacity>
             ))}
           </Animated.View>
 
-          <View style={styles.bottomSpacer} />
+          <View style={themedStyles.bottomSpacer} />
         </ScrollView>
       </SafeAreaView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   safeArea: {
     flex: 1,
@@ -264,27 +267,31 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 6,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   bookmarkButton: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 6,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   scrollContent: {
     paddingHorizontal: 20,
@@ -304,18 +311,18 @@ const styles = StyleSheet.create({
   bannerBadgeText: {
     fontSize: 11,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: colors.white,
   },
   topicTitle: {
     fontSize: 24,
     fontWeight: '800' as const,
-    color: Colors.primary,
+    color: colors.text,
     marginBottom: 6,
     letterSpacing: -0.3,
   },
   topicDescription: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
     marginBottom: 16,
   },
@@ -332,7 +339,7 @@ const styles = StyleSheet.create({
   topicStatText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
   },
   actionRow: {
     flexDirection: 'row',
@@ -347,41 +354,38 @@ const styles = StyleSheet.create({
     gap: 8,
     borderRadius: 14,
     padding: 14,
-    shadowColor: 'rgba(0,0,0,0.1)',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 8,
-    elevation: 3,
   },
   actionButtonText: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: colors.white,
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: '700' as const,
-    color: Colors.primary,
+    color: colors.primary,
     marginBottom: 14,
   },
   subtopicCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 6,
     elevation: 1,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   subtopicIndex: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.surfaceAlt,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -396,23 +400,23 @@ const styles = StyleSheet.create({
   subtopicTitle: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: colors.text,
     marginBottom: 3,
   },
   subtopicContent: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 17,
     marginBottom: 4,
   },
   subtopicKeyCount: {
     fontSize: 11,
-    color: Colors.textLight,
+    color: colors.textLight,
     fontWeight: '500' as const,
   },
   errorText: {
     fontSize: 16,
-    color: Colors.error,
+    color: colors.error,
     textAlign: 'center' as const,
     marginTop: 40,
   },

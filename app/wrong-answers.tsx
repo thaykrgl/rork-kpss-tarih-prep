@@ -11,16 +11,19 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, XCircle, Check, Trash2, RefreshCw } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import Colors from '@/constants/colors';
 import { useStudy } from '@/providers/StudyProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 import { topics } from '@/mocks/topics';
 import { questions as allQuestions } from '@/mocks/questions';
 
 export default function WrongAnswersScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
   const { progress, removeWrongAnswer, markWrongAnswerReviewed } = useStudy();
   const [selectedTopicFilter, setSelectedTopicFilter] = useState<string>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const themedStyles = useMemo(() => styles(colors), [colors]);
 
   const wrongAnswers = useMemo(() => {
     const wa = progress.wrongAnswers || [];
@@ -52,34 +55,34 @@ export default function WrongAnswersScreen() {
   }, [markWrongAnswerReviewed, expandedId]);
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={styles.safeArea}>
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.headerBtn} onPress={() => router.back()}>
-            <ArrowLeft color={Colors.primary} size={22} />
+    <View style={themedStyles.container}>
+      <SafeAreaView edges={['top']} style={themedStyles.safeArea}>
+        <View style={themedStyles.header}>
+          <TouchableOpacity style={themedStyles.headerBtn} onPress={() => router.back()}>
+            <ArrowLeft color={colors.primary} size={22} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Yanlış Cevaplar</Text>
-          <View style={styles.headerBtn} />
+          <Text style={themedStyles.headerTitle}>Yanlış Cevaplar</Text>
+          <View style={themedStyles.headerBtnInvisible} />
         </View>
 
         {wrongAnswers.length === 0 && (progress.wrongAnswers || []).length === 0 ? (
-          <View style={styles.emptyState}>
-            <Check color={Colors.success} size={48} />
-            <Text style={styles.emptyTitle}>Harika!</Text>
-            <Text style={styles.emptySubtitle}>Henüz yanlış cevabınız yok. Test çözerek başlayın.</Text>
+          <View style={themedStyles.emptyState}>
+            <Check color={colors.success} size={48} />
+            <Text style={themedStyles.emptyTitle}>Harika!</Text>
+            <Text style={themedStyles.emptySubtitle}>Henüz yanlış cevabınız yok. Test çözerek başlayın.</Text>
           </View>
         ) : (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={themedStyles.scrollContent}>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.filterRow}
+              contentContainerStyle={themedStyles.filterRow}
             >
               <TouchableOpacity
-                style={[styles.filterChip, selectedTopicFilter === 'all' && styles.filterChipActive]}
+                style={[themedStyles.filterChip, selectedTopicFilter === 'all' && themedStyles.filterChipActive]}
                 onPress={() => setSelectedTopicFilter('all')}
               >
-                <Text style={[styles.filterChipText, selectedTopicFilter === 'all' && styles.filterChipTextActive]}>
+                <Text style={[themedStyles.filterChipText, selectedTopicFilter === 'all' && themedStyles.filterChipTextActive]}>
                   Tümü ({(progress.wrongAnswers || []).length})
                 </Text>
               </TouchableOpacity>
@@ -89,14 +92,14 @@ export default function WrongAnswersScreen() {
                   <TouchableOpacity
                     key={t.id}
                     style={[
-                      styles.filterChip,
+                      themedStyles.filterChip,
                       selectedTopicFilter === t.id && { backgroundColor: t.color + '18', borderColor: t.color },
                     ]}
                     onPress={() => setSelectedTopicFilter(t.id)}
                   >
                     <Text
                       style={[
-                        styles.filterChipText,
+                        themedStyles.filterChipText,
                         selectedTopicFilter === t.id && { color: t.color },
                       ]}
                     >
@@ -115,24 +118,24 @@ export default function WrongAnswersScreen() {
               const isExpanded = expandedId === wa.questionId;
 
               return (
-                <View key={wa.questionId + wa.date} style={styles.card}>
+                <View key={wa.questionId + wa.date} style={themedStyles.card}>
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => handleReview(wa.questionId)}
-                    style={styles.cardHeader}
+                    style={themedStyles.cardHeader}
                   >
-                    <View style={[styles.cardDot, { backgroundColor: topic?.color || Colors.error }]} />
-                    <View style={styles.cardContent}>
-                      <Text style={styles.cardQuestion} numberOfLines={isExpanded ? undefined : 2}>
+                    <View style={[themedStyles.cardDot, { backgroundColor: topic?.color || colors.error }]} />
+                    <View style={themedStyles.cardContent}>
+                      <Text style={themedStyles.cardQuestion} numberOfLines={isExpanded ? undefined : 2}>
                         {question.text}
                       </Text>
-                      <View style={styles.cardMeta}>
-                        <Text style={styles.cardMetaText}>{topic?.title}</Text>
+                      <View style={themedStyles.cardMeta}>
+                        <Text style={themedStyles.cardMetaText}>{topic?.title}</Text>
                         {wa.reviewedCount > 0 && (
                           <>
-                            <View style={styles.cardMetaDot} />
-                            <RefreshCw color={Colors.textLight} size={10} />
-                            <Text style={styles.cardMetaText}>{wa.reviewedCount}x tekrar</Text>
+                            <View style={themedStyles.cardMetaDot} />
+                            <RefreshCw color={colors.textLight} size={10} />
+                            <Text style={themedStyles.cardMetaText}>{wa.reviewedCount}x tekrar</Text>
                           </>
                         )}
                       </View>
@@ -140,28 +143,28 @@ export default function WrongAnswersScreen() {
                   </TouchableOpacity>
 
                   {isExpanded && (
-                    <View style={styles.expandedContent}>
-                      <View style={styles.answerRow}>
-                        <XCircle color={Colors.error} size={14} />
-                        <Text style={styles.wrongAnswerText}>
+                    <View style={themedStyles.expandedContent}>
+                      <View style={themedStyles.answerRow}>
+                        <XCircle color={colors.error} size={14} />
+                        <Text style={themedStyles.wrongAnswerText}>
                           Seçtiğiniz: {question.options[wa.selectedAnswer]}
                         </Text>
                       </View>
-                      <View style={styles.answerRow}>
-                        <Check color={Colors.success} size={14} />
-                        <Text style={styles.correctAnswerText}>
+                      <View style={themedStyles.answerRow}>
+                        <Check color={colors.success} size={14} />
+                        <Text style={themedStyles.correctAnswerText}>
                           Doğru: {question.options[question.correctAnswer]}
                         </Text>
                       </View>
-                      <View style={styles.explanationBox}>
-                        <Text style={styles.explanationText}>{question.explanation}</Text>
+                      <View style={themedStyles.explanationBox}>
+                        <Text style={themedStyles.explanationText}>{question.explanation}</Text>
                       </View>
                       <TouchableOpacity
-                        style={styles.removeBtn}
+                        style={themedStyles.removeBtn}
                         onPress={() => handleRemove(wa.questionId)}
                       >
-                        <Trash2 color={Colors.error} size={14} />
-                        <Text style={styles.removeBtnText}>Listeden Kaldır</Text>
+                        <Trash2 color={colors.error} size={14} />
+                        <Text style={themedStyles.removeBtnText}>Listeden Kaldır</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -176,10 +179,10 @@ export default function WrongAnswersScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   safeArea: {
     flex: 1,
@@ -194,15 +197,21 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  headerBtnInvisible: {
+    width: 40,
+    height: 40,
   },
   headerTitle: {
     flex: 1,
     fontSize: 17,
     fontWeight: '700' as const,
-    color: Colors.primary,
+    color: colors.text,
     textAlign: 'center' as const,
   },
   scrollContent: {
@@ -217,31 +226,33 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: Colors.surface,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   filterChipActive: {
-    backgroundColor: Colors.primary + '12',
-    borderColor: Colors.primary,
+    backgroundColor: colors.primary + '12',
+    borderColor: colors.primary,
   },
   filterChipText: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
   },
   filterChipTextActive: {
-    color: Colors.primary,
+    color: colors.primary,
   },
   card: {
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     marginBottom: 10,
     overflow: 'hidden',
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 6,
     elevation: 1,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -261,7 +272,7 @@ const styles = StyleSheet.create({
   cardQuestion: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: colors.text,
     lineHeight: 20,
   },
   cardMeta: {
@@ -272,21 +283,21 @@ const styles = StyleSheet.create({
   },
   cardMetaText: {
     fontSize: 11,
-    color: Colors.textLight,
+    color: colors.textLight,
     fontWeight: '500' as const,
   },
   cardMetaDot: {
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: Colors.textLight,
+    backgroundColor: colors.textLight,
     marginHorizontal: 2,
   },
   expandedContent: {
     paddingHorizontal: 14,
     paddingBottom: 14,
     borderTopWidth: 1,
-    borderTopColor: Colors.borderLight,
+    borderTopColor: colors.border,
     paddingTop: 12,
   },
   answerRow: {
@@ -298,27 +309,27 @@ const styles = StyleSheet.create({
   wrongAnswerText: {
     flex: 1,
     fontSize: 13,
-    color: Colors.error,
+    color: colors.error,
     lineHeight: 18,
   },
   correctAnswerText: {
     flex: 1,
     fontSize: 13,
-    color: Colors.success,
+    color: colors.success,
     lineHeight: 18,
     fontWeight: '600' as const,
   },
   explanationBox: {
-    backgroundColor: Colors.accent + '10',
+    backgroundColor: colors.accent + '10',
     borderRadius: 10,
     padding: 12,
     marginTop: 8,
     borderLeftWidth: 3,
-    borderLeftColor: Colors.accent,
+    borderLeftColor: colors.accent,
   },
   explanationText: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
   },
   removeBtn: {
@@ -332,7 +343,7 @@ const styles = StyleSheet.create({
   },
   removeBtnText: {
     fontSize: 12,
-    color: Colors.error,
+    color: colors.error,
     fontWeight: '600' as const,
   },
   emptyState: {
@@ -344,12 +355,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: colors.text,
     marginTop: 16,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 6,
     textAlign: 'center' as const,
   },

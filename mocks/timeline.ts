@@ -8,100 +8,54 @@ export interface TimelineEvent {
 }
 
 export const timelineEvents: TimelineEvent[] = [
-  {
-    id: '1',
-    year: '1071',
-    title: 'Malazgirt Meydan Muharebesi',
-    description: 'Büyük Selçuklu Devleti ile Bizans İmparatorluğu arasında gerçekleşti. Anadolu\'nun kapıları Türklere açıldı.',
-    type: 'war',
-    importance: 3
-  },
-  {
-    id: '2',
-    year: '1299',
-    title: 'Osmanlı Devleti\'nin Kuruluşu',
-    description: 'Osman Gazi tarafından Söğüt ve çevresinde Osmanlı Beyliği kuruldu.',
-    type: 'state',
-    importance: 3
-  },
-  {
-    id: '3',
-    year: '1453',
-    title: 'İstanbul\'un Fethi',
-    description: 'II. Mehmed (Fatih) tarafından Bizans İmparatorluğu\'na son verildi. Orta Çağ kapandı, Yeni Çağ başladı.',
-    type: 'war',
-    importance: 3
-  },
-  {
-    id: '4',
-    year: '1517',
-    title: 'Mısır Seferi ve Hilafet',
-    description: 'Yavuz Sultan Selim döneminde Ridaniye Savaşı ile Memlük Devleti yıkıldı, halifelik Osmanlı\'ya geçti.',
-    type: 'war',
-    importance: 2
-  },
-  {
-    id: '5',
-    year: '1699',
-    title: 'Karlofça Antlaşması',
-    description: 'Osmanlı Devleti\'nin ilk kez büyük çapta toprak kaybettiği antlaşmadır. Duraklama dönemi bitti, Gerileme başladı.',
-    type: 'treaty',
-    importance: 3
-  },
-  {
-    id: '6',
-    year: '1839',
-    title: 'Tanzimat Fermanı',
-    description: 'Gülhane Parkı\'nda okundu. Hukuk üstünlüğü ve anayasalcılık yolunda atılan ilk önemli adımdır.',
-    type: 'internal',
-    importance: 3
-  },
-  {
-    id: '7',
-    year: '1876',
-    title: 'I. Meşrutiyet\'in İlanı',
-    description: 'Kanun-i Esasi kabul edildi. İlk kez halk seçme seçilme hakkını kullanarak meclise girdi.',
-    type: 'internal',
-    importance: 3
-  },
-  {
-    id: '8',
-    year: '1919',
-    title: 'Samsun\'a Çıkış',
-    description: 'Mustafa Kemal Paşa 19 Mayıs\'ta Samsun\'a çıkarak Milli Mücadele\'yi fiilen başlattı.',
-    type: 'state',
-    importance: 3
-  },
-  {
-    id: '9',
-    year: '1920',
-    title: 'TBMM\'nin Açılması',
-    description: '23 Nisan\'da Ankara\'da açılan meclis, halkın iradesini temsil eden en üst kurum oldu.',
-    type: 'state',
-    importance: 3
-  },
-  {
-    id: '10',
-    year: '1922',
-    title: 'Mudanya Ateşkes Antlaşması',
-    description: 'Kurtuluş Savaşı\'nın silahlı mücadelesini bitiren antlaşmadır. İstanbul ve Doğu Trakya savaşsız kurtarıldı.',
-    type: 'treaty',
-    importance: 2
-  },
-  {
-    id: '11',
-    year: '1923',
-    title: 'Cumhuriyetin İlanı',
-    description: '29 Ekim\'de devletin yönetim şekli resmen Cumhuriyet olarak belirlendi.',
-    type: 'state',
-    importance: 3
-  },
-  {
-    id: '12',
-    year: '1924',
-    title: 'Halifeliğin Kaldırılması',
-    description: 'Laikliğin en önemli aşamasıdır. Tevhid-i Tedrisat Kanunu da aynı gün kabul edildi.',
-    type: 'internal',
-    importance: 3
-  }
+  { id: '1', year: '1071', title: 'Malazgirt Meydan Muharebesi', description: 'Anadolu\'nun kapıları Türklere açıldı.', type: 'war', importance: 3 },
+  { id: '2', year: '1176', title: 'Miryokefalon Savaşı', description: 'Anadolu\'nun Türk yurdu olduğu kesinleşti.', type: 'war', importance: 3 },
+  { id: '3', year: '1243', title: 'Kösedağ Savaşı', description: 'Anadolu Selçuklu Devleti Moğollara yenildi, yıkılış sürecine girdi.', type: 'war', importance: 3 },
+  { id: '4', year: '1299', title: 'Osmanlı Devleti\'nin Kuruluşu', description: 'Osman Bey bağımsızlığını ilan etti.', type: 'state', importance: 3 },
+  { id: '5', year: '1326', title: 'Bursa\'nın Fethi', description: 'Orhan Bey dönemi; Bursa başkent yapıldı.', type: 'state', importance: 2 },
+  { id: '6', year: '1353', title: 'Çimpe Kalesi\'nin Alınması', description: 'Rumeli\'ye ilk adım atıldı.', type: 'state', importance: 3 },
+  { id: '7', year: '1362', title: 'Edirne\'nin Fethi', description: 'Edirne başkent yapıldı, Sazlıdere Savaşı ile fethedildi.', type: 'war', importance: 2 },
+  { id: '8', year: '1389', title: 'I. Kosova Savaşı', description: 'Haçlılara karşı zafer, I. Murat savaş alanında şehit oldu.', type: 'war', importance: 2 },
+  { id: '9', year: '1396', title: 'Niğbolu Savaşı', description: 'Yıldırım Bayezid Haçlı ordusunu imha etti.', type: 'war', importance: 2 },
+  { id: '10', year: '1402', title: 'Ankara Savaşı', description: 'Timur\'a yenilen Yıldırım Bayezid esir düştü, Fetret Devri başladı.', type: 'war', importance: 3 },
+  { id: '11', year: '1444', title: 'Varna Savaşı', description: 'II. Murat komutasındaki Osmanlı Haçlıları yendi.', type: 'war', importance: 2 },
+  { id: '12', year: '1448', title: 'II. Kosova Savaşı', description: 'Balkanlar\'ın Türk yurdu olduğu kesinleşti.', type: 'war', importance: 3 },
+  { id: '13', year: '1453', title: 'İstanbul\'un Fethi', description: 'Orta Çağ kapandı, Yeni Çağ başladı.', type: 'state', importance: 3 },
+  { id: '14', year: '1461', title: 'Trabzon\'un Fethi', description: 'Pontus Rum İmparatorluğu sona erdirildi.', type: 'war', importance: 2 },
+  { id: '15', year: '1473', title: 'Otlukbeli Savaşı', description: 'Akkoyunlu Uzun Hasan yenildi, doğu sınırı güvenliği sağlandı.', type: 'war', importance: 2 },
+  { id: '16', year: '1514', title: 'Çaldıran Savaşı', description: 'Yavuz Sultan Selim Safevileri yendi.', type: 'war', importance: 2 },
+  { id: '17', year: '1517', title: 'Ridaniye Savaşı', description: 'Memlükler yıkıldı, Halifelik Osmanlı\'ya geçti.', type: 'war', importance: 3 },
+  { id: '18', year: '1521', title: 'Belgrad\'ın Fethi', description: 'Kanuni dönemi, Avrupa seferleri için üs kazanıldı.', type: 'state', importance: 2 },
+  { id: '19', year: '1526', title: 'Mohaç Meydan Muharebesi', description: 'Dünyanın en kısa süren meydan savaşı (2 saat).', type: 'war', importance: 3 },
+  { id: '20', year: '1533', title: 'İstanbul Antlaşması', description: 'Avusturya arşidükü Osmanlı sadrazamına denk sayıldı.', type: 'treaty', importance: 3 },
+  { id: '21', year: '1538', title: 'Preveze Deniz Zaferi', description: 'Akdeniz Türk gölü haline geldi.', type: 'war', importance: 3 },
+  { id: '22', year: '1555', title: 'Amasya Antlaşması', description: 'İran ile yapılan ilk resmi barış anlaşması.', type: 'treaty', importance: 2 },
+  { id: '23', year: '1571', title: 'Kıbrıs\'ın Fethi', description: 'Doğu Akdeniz tamamen Osmanlı kontrolüne girdi.', type: 'state', importance: 2 },
+  { id: '24', year: '1590', title: 'Ferhat Paşa Antlaşması', description: 'Osmanlı doğuda en geniş sınırlara ulaştı.', type: 'treaty', importance: 2 },
+  { id: '25', year: '1606', title: 'Zitvatorok Antlaşması', description: 'Osmanlı\'nın Avrupa üzerindeki siyasi üstünlüğü sona erdi.', type: 'treaty', importance: 3 },
+  { id: '26', year: '1639', title: 'Kasr-ı Şirin Antlaşması', description: 'Bugünkü Türkiye-İran sınırı büyük ölçüde çizildi.', type: 'treaty', importance: 3 },
+  { id: '27', year: '1672', title: 'Bucaş Antlaşması', description: 'Osmanlı batıda en geniş sınırlara ulaştı.', type: 'treaty', importance: 2 },
+  { id: '28', year: '1683', title: 'II. Viyana Kuşatması', description: 'Bozgun sonrası Kutsal İttifak kuruldu.', type: 'war', importance: 3 },
+  { id: '29', year: '1699', title: 'Karlofça Antlaşması', description: 'Osmanlı ilk kez büyük toprak kaybına uğradı.', type: 'treaty', importance: 3 },
+  { id: '30', year: '1718', title: 'Pasarofça Antlaşması', description: 'Lale Devri başladı, Batılılaşma süreci ivme kazandı.', type: 'treaty', importance: 2 },
+  { id: '31', year: '1774', title: 'Küçük Kaynarca Antlaşması', description: 'Kırım bağımsız oldu, ilk kez halkı müslüman bir toprak kaybedildi.', type: 'treaty', importance: 3 },
+  { id: '32', year: '1808', title: 'Sened-i İttifak', description: 'Ayanlarla imzalanan, padişahın yetkilerini kısıtlayan ilk belge.', type: 'internal', importance: 2 },
+  { id: '33', year: '1839', title: 'Tanzimat Fermanı', description: 'Osmanlı\'da anayasallaşma sürecinin ilk adımı.', type: 'internal', importance: 3 },
+  { id: '34', year: '1856', title: 'Islahat Fermanı', description: 'Gayrimüslimlere yönelik büyük ayrıcalıklar verildi.', type: 'internal', importance: 2 },
+  { id: '35', year: '1876', title: 'I. Meşrutiyet\'in İlanı', description: 'İlk anayasa (Kanun-i Esasi) yürürlüğe girdi.', type: 'internal', importance: 3 },
+  { id: '36', year: '1878', title: 'Berlin Antlaşması', description: 'Ermeni meselesi ilk kez uluslararası bir belgede yer aldı.', type: 'treaty', importance: 3 },
+  { id: '37', year: '1908', title: 'II. Meşrutiyet\'in İlanı', description: 'Padişah yetkileri büyük ölçüde kısıtlandı.', type: 'internal', importance: 2 },
+  { id: '38', year: '1911', title: 'Trablusgarp Savaşı', description: 'Mustafa Kemal\'in ilk askeri başarısı.', type: 'war', importance: 2 },
+  { id: '39', year: '1914', title: 'I. Dünya Savaşı\'nın Başlaması', description: 'Osmanlı Devleti İttifak Devletleri yanında savaşa girdi.', type: 'war', importance: 3 },
+  { id: '40', year: '1918', title: 'Mondros Ateşkes Antlaşması', description: 'Osmanlı Devleti fiilen sona erdi.', type: 'treaty', importance: 3 },
+  { id: '41', year: '1919', title: 'Mustafa Kemal\'in Samsun\'a Çıkışı', description: 'Milli Mücadele fiilen başladı.', type: 'state', importance: 3 },
+  { id: '42', year: '1919', title: 'Sivas Kongresi', description: 'Cemiyetler tek çatı altında birleştirildi.', type: 'internal', importance: 3 },
+  { id: '43', year: '1920', title: 'TBMM\'nin Açılması', description: 'Milli egemenlik yolunda en büyük adım.', type: 'state', importance: 3 },
+  { id: '44', year: '1921', title: 'I. İnönü Zaferi', description: 'Düzenli ordunun ilk askeri başarısı.', type: 'war', importance: 2 },
+  { id: '45', year: '1921', title: 'Sakarya Meydan Muharebesi', description: 'Türklerin II. Viyana\'dan beri süren geri çekilişi sona erdi.', type: 'war', importance: 3 },
+  { id: '46', year: '1922', title: 'Büyük Taarruz', description: 'Anadolu düşman işgalinden tamamen kurtarıldı.', type: 'war', importance: 3 },
+  { id: '47', year: '1923', title: 'Lozan Barış Antlaşması', description: 'Yeni Türk devletinin bağımsızlığı dünyaca kabul edildi.', type: 'treaty', importance: 3 },
+  { id: '48', year: '1923', title: 'Cumhuriyet\'in İlanı', description: 'Yeni devletin rejimi belirlendi.', type: 'state', importance: 3 },
+  { id: '49', year: '1924', title: 'Hilafetin Kaldırılması', description: 'Laikleşme yolundaki en önemli adım.', type: 'state', importance: 3 },
+  { id: '50', year: '1939', title: 'Hatay\'ın Anavatana Katılması', description: 'Misak-ı Milli yolunda son büyük adım.', type: 'state', importance: 2 },
 ];

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -13,11 +13,12 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { X, Crown, Check, Sparkles, BookOpen, Brain, Layers } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import Colors from '@/constants/colors';
 import { usePremium } from '@/providers/PremiumProvider';
+import { useTheme } from '@/providers/ThemeProvider';
 
 export default function PaywallScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
   const {
     lifetimePackage,
     purchasePackage,
@@ -28,6 +29,9 @@ export default function PaywallScreen() {
     purchaseError,
     restoreError,
   } = usePremium();
+  
+  const themedStyles = useMemo(() => styles(colors), [colors]);
+  
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
@@ -86,18 +90,18 @@ export default function PaywallScreen() {
   ];
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
-        <View style={styles.header}>
+    <View style={themedStyles.container}>
+      <SafeAreaView edges={['top', 'bottom']} style={themedStyles.safeArea}>
+        <View style={themedStyles.header}>
           <TouchableOpacity
-            style={styles.closeBtn}
+            style={themedStyles.closeBtn}
             onPress={() => router.back()}
             hitSlop={12}
           >
-            <X color={Colors.textSecondary} size={22} />
+            <X color={colors.textSecondary} size={22} />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleRestore} disabled={isRestoring}>
-            <Text style={styles.restoreText}>
+            <Text style={themedStyles.restoreText}>
               {isRestoring ? 'Kontrol ediliyor...' : 'Satın alımı geri yükle'}
             </Text>
           </TouchableOpacity>
@@ -105,68 +109,68 @@ export default function PaywallScreen() {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={themedStyles.scrollContent}
         >
           <Animated.View style={{ opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}>
-            <View style={styles.crownContainer}>
-              <View style={styles.crownCircle}>
+            <View style={themedStyles.crownContainer}>
+              <View style={themedStyles.crownCircle}>
                 <Crown color="#FFD700" size={40} />
               </View>
             </View>
 
-            <Text style={styles.title}>KPSS Tarih Premium</Text>
-            <Text style={styles.subtitle}>
+            <Text style={themedStyles.title}>KPSS Tarih Premium</Text>
+            <Text style={themedStyles.subtitle}>
               Tüm konulara sınırsız erişim ile sınavına en iyi şekilde hazırlan
             </Text>
 
-            <View style={styles.featuresContainer}>
+            <View style={themedStyles.featuresContainer}>
               {features.map((feature, index) => (
-                <View key={index} style={styles.featureRow}>
-                  <View style={[styles.featureIcon, { backgroundColor: feature.color + '15' }]}>
+                <View key={index} style={themedStyles.featureRow}>
+                  <View style={[themedStyles.featureIcon, { backgroundColor: feature.color + '15' }]}>
                     <feature.icon color={feature.color} size={18} />
                   </View>
-                  <Text style={styles.featureText}>{feature.text}</Text>
+                  <Text style={themedStyles.featureText}>{feature.text}</Text>
                 </View>
               ))}
             </View>
 
-            <View style={styles.priceCard}>
-              <View style={styles.priceBadge}>
-                <Text style={styles.priceBadgeText}>Tek Seferlik</Text>
+            <View style={themedStyles.priceCard}>
+              <View style={themedStyles.priceBadge}>
+                <Text style={themedStyles.priceBadgeText}>Tek Seferlik</Text>
               </View>
-              <View style={styles.priceRow}>
-                <View style={styles.priceRadioSelected}>
-                  <Check color={Colors.white} size={12} />
+              <View style={themedStyles.priceRow}>
+                <View style={[themedStyles.priceRadioSelected, { backgroundColor: colors.accent }]}>
+                  <Check color={colors.white} size={12} />
                 </View>
-                <View style={styles.priceInfo}>
-                  <Text style={styles.priceTitle}>Ömür Boyu Erişim</Text>
-                  <Text style={styles.priceSavings}>Abonelik yok, bir kere öde</Text>
+                <View style={themedStyles.priceInfo}>
+                  <Text style={themedStyles.priceTitle}>Ömür Boyu Erişim</Text>
+                  <Text style={themedStyles.priceSavings}>Abonelik yok, bir kere öde</Text>
                 </View>
-                <Text style={styles.priceAmount}>{priceLabel}</Text>
+                <Text style={themedStyles.priceAmount}>{priceLabel}</Text>
               </View>
             </View>
           </Animated.View>
         </ScrollView>
 
-        <View style={styles.bottomContainer}>
+        <View style={themedStyles.bottomContainer}>
           <TouchableOpacity
-            style={[styles.purchaseButton, (isPurchasing || isLoading) && styles.purchaseButtonDisabled]}
+            style={[themedStyles.purchaseButton, (isPurchasing || isLoading) && themedStyles.purchaseButtonDisabled, { backgroundColor: colors.primary }]}
             activeOpacity={0.8}
             onPress={handlePurchase}
             disabled={isPurchasing || isLoading}
           >
             {isPurchasing || isLoading ? (
-              <ActivityIndicator color={Colors.white} size="small" />
+              <ActivityIndicator color={colors.white} size="small" />
             ) : (
               <>
-                <Crown color={Colors.white} size={20} />
-                <Text style={styles.purchaseButtonText}>
+                <Crown color={colors.white} size={20} />
+                <Text style={themedStyles.purchaseButtonText}>
                   {priceLabel} ile Premium'a Geç
                 </Text>
               </>
             )}
           </TouchableOpacity>
-          <Text style={styles.legalText}>
+          <Text style={themedStyles.legalText}>
             Tek seferlik ödeme. Abonelik değildir, otomatik yenilenmez.
           </Text>
         </View>
@@ -175,10 +179,10 @@ export default function PaywallScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   safeArea: {
     flex: 1,
@@ -194,14 +198,16 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   restoreText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -225,29 +231,31 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800' as const,
-    color: Colors.primary,
+    color: colors.text,
     textAlign: 'center' as const,
     letterSpacing: -0.5,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 15,
-    color: Colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: 'center' as const,
     lineHeight: 22,
     marginBottom: 28,
     paddingHorizontal: 10,
   },
   featuresContainer: {
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 18,
     padding: 18,
     marginBottom: 24,
-    shadowColor: Colors.cardShadow,
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   featureRow: {
     flexDirection: 'row',
@@ -265,23 +273,23 @@ const styles = StyleSheet.create({
   featureText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: colors.text,
     flex: 1,
   },
   priceCard: {
     flexDirection: 'column',
-    backgroundColor: Colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     borderWidth: 2,
-    borderColor: Colors.accent,
+    borderColor: colors.accent,
     position: 'relative' as const,
   },
   priceBadge: {
     position: 'absolute' as const,
     top: -10,
     right: 16,
-    backgroundColor: Colors.accent,
+    backgroundColor: colors.accent,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 8,
@@ -289,7 +297,7 @@ const styles = StyleSheet.create({
   priceBadgeText: {
     fontSize: 10,
     fontWeight: '800' as const,
-    color: Colors.white,
+    color: colors.white,
     letterSpacing: 0.3,
   },
   priceRow: {
@@ -300,7 +308,6 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: Colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
@@ -311,36 +318,35 @@ const styles = StyleSheet.create({
   priceTitle: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.primary,
+    color: colors.primary,
   },
   priceSavings: {
     fontSize: 11,
     fontWeight: '600' as const,
-    color: Colors.success,
+    color: colors.success,
     marginTop: 2,
   },
   priceAmount: {
     fontSize: 22,
     fontWeight: '800' as const,
-    color: Colors.primary,
+    color: colors.text,
   },
   bottomContainer: {
     paddingHorizontal: 24,
     paddingBottom: 8,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: Colors.borderLight,
-    backgroundColor: Colors.background,
+    borderTopColor: colors.border,
+    backgroundColor: colors.background,
   },
   purchaseButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: Colors.primary,
     borderRadius: 16,
     padding: 18,
-    shadowColor: 'rgba(0,0,0,0.2)',
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
@@ -352,11 +358,11 @@ const styles = StyleSheet.create({
   purchaseButtonText: {
     fontSize: 17,
     fontWeight: '800' as const,
-    color: Colors.white,
+    color: colors.white,
   },
   legalText: {
     fontSize: 11,
-    color: Colors.textLight,
+    color: colors.textLight,
     textAlign: 'center' as const,
     marginTop: 10,
     lineHeight: 16,

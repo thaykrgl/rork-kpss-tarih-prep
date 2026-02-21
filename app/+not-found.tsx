@@ -1,15 +1,17 @@
 import { Link, Stack } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
-import Colors from "@/constants/colors";
+import { useTheme } from "@/providers/ThemeProvider";
 
 export default function NotFoundScreen() {
+  const { colors } = useTheme();
+  
   return (
     <>
       <Stack.Screen options={{ title: "Sayfa Bulunamadı" }} />
-      <View style={styles.container}>
-        <Text style={styles.title}>Bu sayfa mevcut değil.</Text>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Text style={[styles.title, { color: colors.text }]}>Bu sayfa mevcut değil.</Text>
         <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Ana sayfaya dön</Text>
+          <Text style={[styles.linkText, { color: colors.primary }]}>Ana sayfaya dön</Text>
         </Link>
       </View>
     </>
@@ -22,12 +24,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    backgroundColor: Colors.background,
   },
   title: {
     fontSize: 18,
     fontWeight: "700" as const,
-    color: Colors.text,
   },
   link: {
     marginTop: 15,
@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
   },
   linkText: {
     fontSize: 14,
-    color: Colors.primary,
     fontWeight: "600" as const,
   },
 });
