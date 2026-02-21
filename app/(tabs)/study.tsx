@@ -19,16 +19,18 @@ import {
   Lock,
   Clock,
   Book,
-  Calendar,
+  Calendar as CalendarIcon,
   BarChart3,
   Map as MapIcon,
   Zap,
+  Bell,
 } from 'lucide-react-native';
 import { useStudy } from '@/providers/StudyProvider';
 import { usePremium } from '@/providers/PremiumProvider';
 import { useTheme } from '@/providers/ThemeProvider';
 import { topics } from '@/mocks/topics';
 import { flashcards } from '@/mocks/flashcards';
+import { exams } from '@/mocks/exams';
 
 const { width } = Dimensions.get('window');
 
@@ -48,6 +50,28 @@ export default function StudyScreen() {
     }
     return counts;
   }, []);
+
+  const nearestExam = useMemo(() => {
+    const now = new Date();
+    return exams
+      .filter(e => new Date(e.date) > now)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+  }, []);
+
+  const examCountdown = useMemo(() => {
+    if (!nearestExam) return null;
+    const now = new Date();
+    const examDate = new Date(nearestExam.date);
+    const diff = examDate.getTime() - now.getTime();
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    
+    // Uygulama tarihleri kontrolü
+    const appStart = new Date(nearestExam.applicationStart);
+    const appEnd = new Date(nearestExam.applicationEnd);
+    const isApplicationActive = now >= appStart && now <= appEnd;
+
+    return { days, isApplicationActive };
+  }, [nearestExam]);
 
   const themedStyles = useMemo(() => styles(colors), [colors]);
 
@@ -91,6 +115,49 @@ export default function StudyScreen() {
           </View>
           <Text style={themedStyles.sectionSub}>Özel çalışma modları ile verimini artır</Text>
 
+          {nearestExam && examCountdown && (
+            <TouchableOpacity 
+              style={themedStyles.examCard} 
+              activeOpacity={0.9}
+              onPress={() => router.push('/exam-calendar')}
+            >
+              <View style={themedStyles.examHeader}>
+                <View style={[themedStyles.examIcon, { backgroundColor: nearestExam.color + '20' }]}>
+                  <CalendarIcon color={nearestExam.color} size={20} />
+                </View>
+                <View style={themedStyles.examHeaderText}>
+                  <Text style={themedStyles.examTarget}>{nearestExam.shortTitle}</Text>
+                  <Text style={themedStyles.examTitle} numberOfLines={1}>{nearestExam.title}</Text>
+                </View>
+                <View style={themedStyles.examDaysContainer}>
+                  <Text style={[themedStyles.examDays, { color: nearestExam.color }]}>{examCountdown.days}</Text>
+                  <Text style={themedStyles.examDaysLabel}>GÜN</Text>
+                </View>
+              </View>
+
+              <View style={themedStyles.examProgressContainer}>
+                <View style={themedStyles.examProgressBarBg}>
+                  <View 
+                    style={[
+                      themedStyles.examProgressBarFill, 
+                      { width: `${Math.max(10, 100 - (examCountdown.days / 365) * 100)}%`, backgroundColor: nearestExam.color }
+                    ]} 
+                  />
+                </View>
+                <Text style={themedStyles.examDateText}>
+                  Sınav Tarihi: {new Date(nearestExam.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </Text>
+              </View>
+
+              {examCountdown.isApplicationActive && (
+                <View style={themedStyles.alertBanner}>
+                  <Bell color={colors.warning} size={14} />
+                  <Text style={themedStyles.alertText}>Başvurular devam ediyor! Son gün: {new Date(nearestExam.applicationEnd).toLocaleDateString('tr-TR')}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          )}
+
           <View style={themedStyles.toolsGrid}>
             <TouchableOpacity 
               style={themedStyles.toolCard}
@@ -108,7 +175,7 @@ export default function StudyScreen() {
               onPress={() => router.push('/timeline')}
             >
               <View style={[themedStyles.toolIcon, { backgroundColor: '#2ECC71' + '15' }]}>
-                <Calendar color="#2ECC71" size={24} />
+                <CalendarIcon color="#2ECC71" size={24} />
               </View>
               <Text style={themedStyles.toolTitle}>Zaman Tüneli</Text>
               <Text style={themedStyles.toolDesc}>Kronolojik Akış</Text>
@@ -336,5 +403,96 @@ const styles = (colors: any) => StyleSheet.create({
   dueText: {
     fontSize: 10,
     fontWeight: '700' as const,
+  },
+  examCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    padding: 18,
+    marginBottom: 20,
+    shadowColor: colors.cardShadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 1,
+    shadowRadius: 16,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  examHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  examIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  examHeaderText: {
+    flex: 1,
+  },
+  examTarget: {
+    fontSize: 12,
+    fontWeight: '600' as const,
+    color: colors.textLight,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  examTitle: {
+    fontSize: 16,
+    fontWeight: '700' as const,
+    color: colors.text,
+    marginTop: 1,
+  },
+  examDaysContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft: 16,
+    borderLeftWidth: 1,
+    borderLeftColor: colors.border,
+  },
+  examDays: {
+    fontSize: 24,
+    fontWeight: '900' as const,
+  },
+  examDaysLabel: {
+    fontSize: 9,
+    fontWeight: '700' as const,
+    color: colors.textLight,
+  },
+  examProgressContainer: {
+    marginBottom: 8,
+  },
+  examProgressBarBg: {
+    height: 6,
+    backgroundColor: colors.border,
+    borderRadius: 3,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  examProgressBarFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  examDateText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    fontWeight: '500' as const,
+  },
+  alertBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.warning + '12',
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 8,
+    gap: 8,
+  },
+  alertText: {
+    fontSize: 12,
+    color: colors.warning,
+    fontWeight: '600' as const,
   },
 });
