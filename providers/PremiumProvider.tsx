@@ -2,14 +2,20 @@ import { useState, useCallback, useEffect } from 'react';
 import { Platform } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import createContextHook from '@nkzw/create-context-hook';
-import Purchases, {
-  PurchasesOffering,
-  PurchasesPackage,
-  CustomerInfo,
-  LOG_LEVEL,
-} from 'react-native-purchases';
 
 const ENTITLEMENT_ID = 'premium';
+
+let Purchases: any = null;
+let LOG_LEVEL: any = null;
+let rcConfigured = false;
+
+try {
+  const mod = require('react-native-purchases');
+  Purchases = mod.default;
+  LOG_LEVEL = mod.LOG_LEVEL;
+} catch (e) {
+  console.warn('[Premium] react-native-purchases not available (Expo Go?)');
+}
 
 function getRCToken() {
   if (__DEV__ || Platform.OS === 'web')
@@ -21,21 +27,22 @@ function getRCToken() {
   }) ?? '';
 }
 
-let rcConfigured = false;
-try {
-  const token = getRCToken();
-  if (token) {
-    Purchases.configure({ apiKey: token });
-    if (__DEV__) {
-      Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+if (Purchases) {
+  try {
+    const token = getRCToken();
+    if (token) {
+      Purchases.configure({ apiKey: token });
+      if (__DEV__ && LOG_LEVEL) {
+        Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+      }
+      rcConfigured = true;
+      console.log('[Premium] RevenueCat configured successfully');
+    } else {
+      console.warn('[Premium] No RevenueCat API key found');
     }
-    rcConfigured = true;
-    console.log('[Premium] RevenueCat configured successfully');
-  } else {
-    console.warn('[Premium] No RevenueCat API key found');
+  } catch (e) {
+    console.error('[Premium] Failed to configure RevenueCat:', e);
   }
-} catch (e) {
-  console.error('[Premium] Failed to configure RevenueCat:', e);
 }
 
 export const [PremiumProvider, usePremium] = createContextHook(() => {
@@ -45,61 +52,70 @@ export const [PremiumProvider, usePremium] = createContextHook(() => {
   const customerInfoQuery = useQuery({
     queryKey: ['rc-customer-info'],
     queryFn: async () => {
-      if (!rcConfigured) return null;
+      if (!rcConfigured || !Purchases) return null;
       console.log('[Premium] Fetching customer info...');
       const info = await Purchases.getCustomerInfo();
       console.log('[Premium] Customer info:', JSON.stringify(info.entitlements.active));
       return info;
     },
     staleTime: 1000 * 60 * 5,
+    retry: false,
   });
 
   const offeringsQuery = useQuery({
     queryKey: ['rc-offerings'],
     queryFn: async () => {
-      if (!rcConfigured) return null;
+      if (!rcConfigured || !Purchases) return null;
       console.log('[Premium] Fetching offerings...');
       const offerings = await Purchases.getOfferings();
       console.log('[Premium] Current offering:', offerings.current?.identifier);
-      console.log('[Premium] Packages:', offerings.current?.availablePackages.length);
+      console.log('[Premium] Packages:', offerings.current?.availablePackages?.length);
+      if (offerings.current?.availablePackages) {
+        offerings.current.availablePackages.forEach((pkg: any) => {
+          console.log('[Premium] Package:', pkg.identifier, 'Price:', pkg.product?.priceString);
+        });
+      }
       return offerings;
     },
     staleTime: 1000 * 60 * 10,
+    retry: false,
   });
 
   const purchaseMutation = useMutation({
-    mutationFn: async (pkg: PurchasesPackage) => {
+    mutationFn: async (pkg: any) => {
+      if (!Purchases) throw new Error('Satın alma bu ortamda desteklenmiyor');
       console.log('[Premium] Purchasing package:', pkg.identifier);
       const result = await Purchases.purchasePackage(pkg);
       console.log('[Premium] Purchase result:', JSON.stringify(result.customerInfo.entitlements.active));
       return result.customerInfo;
     },
-    onSuccess: (info: CustomerInfo) => {
+    onSuccess: (info: any) => {
       const hasPremium = info.entitlements.active[ENTITLEMENT_ID] !== undefined;
       setIsPremium(hasPremium);
       queryClient.invalidateQueries({ queryKey: ['rc-customer-info'] });
       console.log('[Premium] Purchase success, isPremium:', hasPremium);
     },
-    onError: (error: Error) => {
-      console.error('[Premium] Purchase error:', error.message);
+    onError: (error: any) => {
+      console.error('[Premium] Purchase error:', error?.message ?? error);
     },
   });
 
   const restoreMutation = useMutation({
     mutationFn: async () => {
+      if (!Purchases) throw new Error('Geri yükleme bu ortamda desteklenmiyor');
       console.log('[Premium] Restoring purchases...');
       const info = await Purchases.restorePurchases();
       console.log('[Premium] Restore result:', JSON.stringify(info.entitlements.active));
       return info;
     },
-    onSuccess: (info: CustomerInfo) => {
+    onSuccess: (info: any) => {
       const hasPremium = info.entitlements.active[ENTITLEMENT_ID] !== undefined;
       setIsPremium(hasPremium);
       queryClient.invalidateQueries({ queryKey: ['rc-customer-info'] });
       console.log('[Premium] Restore success, isPremium:', hasPremium);
     },
-    onError: (error: Error) => {
-      console.error('[Premium] Restore error:', error.message);
+    onError: (error: any) => {
+      console.error('[Premium] Restore error:', error?.message ?? error);
     },
   });
 
@@ -112,14 +128,11 @@ export const [PremiumProvider, usePremium] = createContextHook(() => {
     }
   }, [customerInfoQuery.data]);
 
-  const currentOffering: PurchasesOffering | null =
-    offeringsQuery.data?.current ?? null;
-
-  const lifetimePackage: PurchasesPackage | null =
-    currentOffering?.availablePackages?.[0] ?? null;
+  const currentOffering = offeringsQuery.data?.current ?? null;
+  const lifetimePackage = currentOffering?.availablePackages?.[0] ?? null;
 
   const purchasePackage = useCallback(
-    (pkg: PurchasesPackage) => {
+    (pkg: any) => {
       purchaseMutation.mutate(pkg);
     },
     [purchaseMutation],

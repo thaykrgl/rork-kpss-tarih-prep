@@ -76,7 +76,7 @@ export default function PaywallScreen() {
     restorePurchases();
   };
 
-  const priceLabel = lifetimePackage?.product?.priceString ?? '$3.00';
+  const priceLabel = lifetimePackage?.product?.priceString ?? '₺119,99';
 
   const features = [
     { icon: BookOpen, text: 'Tüm 11 konu başlığına erişim', color: '#2E86AB' },
