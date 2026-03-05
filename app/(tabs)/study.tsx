@@ -11,10 +11,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Layers,
-  XCircle,
   ChevronRight,
-  Brain,
-  Flame,
   Target,
   Lock,
   Clock,
@@ -23,14 +20,12 @@ import {
   BarChart3,
   Map as MapIcon,
   Zap,
-  Bell,
 } from 'lucide-react-native';
 import { useStudy } from '@/providers/StudyProvider';
 import { usePremium } from '@/providers/PremiumProvider';
 import { useTheme } from '@/providers/ThemeProvider';
 import { topics } from '@/mocks/topics';
 import { flashcards } from '@/mocks/flashcards';
-import { exams } from '@/mocks/exams';
 
 const { width } = Dimensions.get('window');
 
@@ -41,8 +36,6 @@ export default function StudyScreen() {
   const { colors } = useTheme();
   const todayStudy = getTodayStudy();
 
-  const wrongCount = (progress.wrongAnswers || []).length;
-
   const flashcardStats = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const fc of flashcards) {
@@ -50,28 +43,6 @@ export default function StudyScreen() {
     }
     return counts;
   }, []);
-
-  const nearestExam = useMemo(() => {
-    const now = new Date();
-    return exams
-      .filter(e => new Date(e.date) > now)
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
-  }, []);
-
-  const examCountdown = useMemo(() => {
-    if (!nearestExam) return null;
-    const now = new Date();
-    const examDate = new Date(nearestExam.date);
-    const diff = examDate.getTime() - now.getTime();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    
-    // Uygulama tarihleri kontrolü
-    const appStart = new Date(nearestExam.applicationStart);
-    const appEnd = new Date(nearestExam.applicationEnd);
-    const isApplicationActive = now >= appStart && now <= appEnd;
-
-    return { days, isApplicationActive };
-  }, [nearestExam]);
 
   const themedStyles = useMemo(() => styles(colors), [colors]);
 
@@ -85,26 +56,14 @@ export default function StudyScreen() {
           <Text style={themedStyles.title}>Çalışma Merkezi</Text>
           <Text style={themedStyles.subtitle}>Sınava hazırlık için tüm araçlar burada</Text>
 
-          <View style={themedStyles.quickActions}>
-            <TouchableOpacity
-              style={themedStyles.actionCard}
-              activeOpacity={0.7}
-              onPress={() => router.push('/wrong-answers' as any)}
-            >
-              <View style={[themedStyles.actionIcon, { backgroundColor: colors.error + '12' }]}>
-                <XCircle color={colors.error} size={22} />
-              </View>
-              <Text style={themedStyles.actionTitle}>Yanlışlarım</Text>
-              <Text style={themedStyles.actionCount}>{wrongCount} soru</Text>
-            </TouchableOpacity>
-
-            <View style={themedStyles.actionCard}>
-              <View style={[themedStyles.actionIcon, { backgroundColor: colors.accent + '15' }]}>
-                <Target color={colors.accent} size={22} />
-              </View>
-              <Text style={themedStyles.actionTitle}>Bugünkü Hedef</Text>
-              <Text style={themedStyles.actionCount}>
-                {todayStudy?.questionsAnswered ?? 0}/{progress.dailyGoal || 10}
+          <View style={themedStyles.dailyGoalCard}>
+            <View style={[themedStyles.actionIcon, { backgroundColor: colors.accent + '15' }]}>
+              <Target color={colors.accent} size={22} />
+            </View>
+            <View style={themedStyles.dailyGoalInfo}>
+              <Text style={themedStyles.dailyGoalTitle}>Bugünkü Hedef</Text>
+              <Text style={themedStyles.dailyGoalCount}>
+                {todayStudy?.questionsAnswered ?? 0}/{progress.dailyGoal || 10} soru çözüldü
               </Text>
             </View>
           </View>
@@ -115,51 +74,8 @@ export default function StudyScreen() {
           </View>
           <Text style={themedStyles.sectionSub}>Özel çalışma modları ile verimini artır</Text>
 
-          {nearestExam && examCountdown && (
-            <TouchableOpacity 
-              style={themedStyles.examCard} 
-              activeOpacity={0.9}
-              onPress={() => router.push('/exam-calendar')}
-            >
-              <View style={themedStyles.examHeader}>
-                <View style={[themedStyles.examIcon, { backgroundColor: nearestExam.color + '20' }]}>
-                  <CalendarIcon color={nearestExam.color} size={20} />
-                </View>
-                <View style={themedStyles.examHeaderText}>
-                  <Text style={themedStyles.examTarget}>{nearestExam.shortTitle}</Text>
-                  <Text style={themedStyles.examTitle} numberOfLines={1}>{nearestExam.title}</Text>
-                </View>
-                <View style={themedStyles.examDaysContainer}>
-                  <Text style={[themedStyles.examDays, { color: nearestExam.color }]}>{examCountdown.days}</Text>
-                  <Text style={themedStyles.examDaysLabel}>GÜN</Text>
-                </View>
-              </View>
-
-              <View style={themedStyles.examProgressContainer}>
-                <View style={themedStyles.examProgressBarBg}>
-                  <View 
-                    style={[
-                      themedStyles.examProgressBarFill, 
-                      { width: `${Math.max(10, 100 - (examCountdown.days / 365) * 100)}%`, backgroundColor: nearestExam.color }
-                    ]} 
-                  />
-                </View>
-                <Text style={themedStyles.examDateText}>
-                  Sınav Tarihi: {new Date(nearestExam.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </Text>
-              </View>
-
-              {examCountdown.isApplicationActive && (
-                <View style={themedStyles.alertBanner}>
-                  <Bell color={colors.warning} size={14} />
-                  <Text style={themedStyles.alertText}>Başvurular devam ediyor! Son gün: {new Date(nearestExam.applicationEnd).toLocaleDateString('tr-TR')}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          )}
-
           <View style={themedStyles.toolsGrid}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={themedStyles.toolCard}
               onPress={() => router.push('/mock-exam')}
             >
@@ -170,7 +86,18 @@ export default function StudyScreen() {
               <Text style={themedStyles.toolDesc}>27 Soru Karma</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
+              style={themedStyles.toolCard}
+              onPress={() => router.push('/exam-calendar')}
+            >
+              <View style={[themedStyles.toolIcon, { backgroundColor: '#4A90E2' + '15' }]}>
+                <CalendarIcon color="#4A90E2" size={24} />
+              </View>
+              <Text style={themedStyles.toolTitle}>Sınav Takvimi</Text>
+              <Text style={themedStyles.toolDesc}>KPSS 2026</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={themedStyles.toolCard}
               onPress={() => router.push('/timeline')}
             >
@@ -181,7 +108,7 @@ export default function StudyScreen() {
               <Text style={themedStyles.toolDesc}>Kronolojik Akış</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={themedStyles.toolCard}
               onPress={() => router.push('/dictionary')}
             >
@@ -192,7 +119,7 @@ export default function StudyScreen() {
               <Text style={themedStyles.toolDesc}>Tarih Terimleri</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={themedStyles.toolCard}
               onPress={() => router.push('/analysis')}
             >
@@ -201,6 +128,17 @@ export default function StudyScreen() {
               </View>
               <Text style={themedStyles.toolTitle}>Yıl Analizi</Text>
               <Text style={themedStyles.toolDesc}>Konu Dağılımı</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={themedStyles.toolCard}
+              onPress={() => router.push('/maps')}
+            >
+              <View style={[themedStyles.toolIcon, { backgroundColor: '#1ABC9C' + '15' }]}>
+                <MapIcon color="#1ABC9C" size={24} />
+              </View>
+              <Text style={themedStyles.toolTitle}>Haritalar</Text>
+              <Text style={themedStyles.toolDesc}>Tarihî Haritalar</Text>
             </TouchableOpacity>
           </View>
 
@@ -273,23 +211,34 @@ const styles = (colors: any) => StyleSheet.create({
     marginTop: 2,
     marginBottom: 24,
   },
-  quickActions: {
+  dailyGoalCard: {
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
-  },
-  actionCard: {
-    flex: 1,
+    alignItems: 'center',
     backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
     shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
     elevation: 2,
-    borderWidth: 1,
-    borderColor: colors.border,
+  },
+  dailyGoalInfo: {
+    marginLeft: 14,
+    flex: 1,
+  },
+  dailyGoalTitle: {
+    fontSize: 14,
+    fontWeight: '700' as const,
+    color: colors.text,
+  },
+  dailyGoalCount: {
+    fontSize: 12,
+    color: colors.textLight,
+    marginTop: 2,
   },
   actionIcon: {
     width: 44,
@@ -297,17 +246,6 @@ const styles = (colors: any) => StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
-  },
-  actionTitle: {
-    fontSize: 13,
-    fontWeight: '700' as const,
-    color: colors.text,
-  },
-  actionCount: {
-    fontSize: 12,
-    color: colors.textLight,
-    marginTop: 2,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -388,111 +326,5 @@ const styles = (colors: any) => StyleSheet.create({
   flashcardCount: {
     fontSize: 11,
     color: colors.textLight,
-  },
-  flashcardMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 2,
-  },
-  dueBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: 4,
-  },
-  dueText: {
-    fontSize: 10,
-    fontWeight: '700' as const,
-  },
-  examCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    padding: 18,
-    marginBottom: 20,
-    shadowColor: colors.cardShadow,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 1,
-    shadowRadius: 16,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  examHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  examIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  examHeaderText: {
-    flex: 1,
-  },
-  examTarget: {
-    fontSize: 12,
-    fontWeight: '600' as const,
-    color: colors.textLight,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  examTitle: {
-    fontSize: 16,
-    fontWeight: '700' as const,
-    color: colors.text,
-    marginTop: 1,
-  },
-  examDaysContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingLeft: 16,
-    borderLeftWidth: 1,
-    borderLeftColor: colors.border,
-  },
-  examDays: {
-    fontSize: 24,
-    fontWeight: '900' as const,
-  },
-  examDaysLabel: {
-    fontSize: 9,
-    fontWeight: '700' as const,
-    color: colors.textLight,
-  },
-  examProgressContainer: {
-    marginBottom: 8,
-  },
-  examProgressBarBg: {
-    height: 6,
-    backgroundColor: colors.border,
-    borderRadius: 3,
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  examProgressBarFill: {
-    height: '100%',
-    borderRadius: 3,
-  },
-  examDateText: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    fontWeight: '500' as const,
-  },
-  alertBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.warning + '12',
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 8,
-    gap: 8,
-  },
-  alertText: {
-    fontSize: 12,
-    color: colors.warning,
-    fontWeight: '600' as const,
   },
 });

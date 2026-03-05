@@ -70,6 +70,10 @@ function RootLayoutNav() {
         name="maps/index"
         options={{ headerShown: false, animation: "slide_from_right" }}
       />
+      <Stack.Screen
+        name="exam-calendar"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
     </Stack>
     </>
   );
